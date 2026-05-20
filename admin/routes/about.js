@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const About = require('../models/About');
-const fs = require('fs');
-const path = require('path');
+const { del } = require('@vercel/blob');
 
 // Get the current about image
 router.get('/', async (req, res) => {
@@ -23,14 +22,10 @@ router.post('/', async (req, res) => {
     if (about) {
       const oldImageUrl = about.imageUrl;
       
-      // Delete old file if it's a local upload and a new one is being provided
-      if (oldImageUrl && oldImageUrl !== newImageUrl && oldImageUrl.includes('/uploads/')) {
+      // Delete old blob if a new one is being provided
+      if (oldImageUrl && oldImageUrl !== newImageUrl && oldImageUrl.includes('public.blob.vercel-storage.com')) {
         try {
-          const filename = oldImageUrl.split('/uploads/').pop();
-          const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-          }
+          await del(oldImageUrl);
         } catch (err) {
           console.error("Error deleting old about image:", err);
         }

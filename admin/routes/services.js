@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Service = require('../models/Service');
-const fs = require('fs');
-const path = require('path');
+const { del } = require('@vercel/blob');
 
 // Get all services
 router.get('/', async (req, res) => {
@@ -34,14 +33,10 @@ router.put('/:id', async (req, res) => {
     const oldImage = service.image;
     const newImage = req.body.image;
 
-    // Delete old file if it's a local upload and the image is being changed
-    if (oldImage && oldImage !== newImage && oldImage.includes('/uploads/')) {
+    // Delete old blob if the image is being changed
+    if (oldImage && oldImage !== newImage && oldImage.includes('public.blob.vercel-storage.com')) {
       try {
-        const filename = oldImage.split('/uploads/').pop();
-        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+        await del(oldImage);
       } catch (err) {
         console.error("Error deleting replaced service image:", err);
       }
@@ -58,11 +53,9 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
-    if (service && service.image && service.image.includes('/uploads/')) {
+    if (service && service.image && service.image.includes('public.blob.vercel-storage.com')) {
       try {
-        const filename = service.image.split('/uploads/').pop();
-        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        await del(service.image);
       } catch (err) {
         console.error("Error deleting service image file:", err);
       }

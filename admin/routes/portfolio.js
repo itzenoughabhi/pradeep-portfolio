@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Portfolio = require('../models/Portfolio');
-const fs = require('fs');
-const path = require('path');
+const { del } = require('@vercel/blob');
 
 // Get all portfolio items
 router.get('/', async (req, res) => {
@@ -34,14 +33,10 @@ router.put('/:id', async (req, res) => {
     const oldImage = item.image;
     const newImage = req.body.image;
 
-    // Delete old file if it's a local upload and the image is being changed
-    if (oldImage && oldImage !== newImage && oldImage.includes('/uploads/')) {
+    // Delete old blob if the image is being changed
+    if (oldImage && oldImage !== newImage && oldImage.includes('public.blob.vercel-storage.com')) {
       try {
-        const filename = oldImage.split('/uploads/').pop();
-        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+        await del(oldImage);
       } catch (err) {
         console.error("Error deleting replaced portfolio image:", err);
       }
@@ -58,11 +53,9 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const item = await Portfolio.findById(req.params.id);
-    if (item && item.image && item.image.includes('/uploads/')) {
+    if (item && item.image && item.image.includes('public.blob.vercel-storage.com')) {
       try {
-        const filename = item.image.split('/uploads/').pop();
-        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        await del(item.image);
       } catch (err) {
         console.error("Error deleting portfolio image file:", err);
       }
