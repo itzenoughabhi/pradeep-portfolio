@@ -163,6 +163,7 @@
             <form id="serviceForm">
                 <input type="text" id="s-title" placeholder="Service Title" required>
                 <textarea id="s-description" placeholder="Service Description" rows="3" required></textarea>
+                <input type="text" id="s-link" placeholder="Service Link (e.g. instagram.com/user or /portfolio.html)">
                 <input type="text" id="s-url" placeholder="Image URL (Leave empty if uploading a file)">
                 <input type="file" id="s-file" accept="image/*">
                 <span class="upload-hint">* Please upload smaller size images to keep your website loading fast.</span>
@@ -217,6 +218,15 @@
             window.location.href = 'login.html';
         }
 
+        // Helper to ensure links work correctly (prepends https:// if missing)
+        function formatLink(url) {
+            if (!url) return '';
+            if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/') || url.startsWith('#')) {
+                return url;
+            }
+            return `https://${url}`;
+        }
+
         // Helper to ensure images show up correctly whether they are external URLs or local uploads
         function getImgUrl(path) {
             if (!path) return '';
@@ -269,8 +279,11 @@
                 card.className = 'card';
                 card.innerHTML = `
                     <img src="${getImgUrl(item.image)}" alt="${item.title}">
-                    <h4>${item.title}</h4>
-                    ${isService ? `<p>${item.description}</p>` : ''}
+                    ${isService ? `
+                        ${item.link ? `<a href="${formatLink(item.link)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;"><h4 style="cursor: pointer; color: var(--primary);">${item.title} 🔗</h4></a>` : `<h4>${item.title}</h4>`}
+                        ${item.link ? `<p style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px; word-break: break-all;">URL: ${item.link}</p>` : ''}
+                        <p>${item.description}</p>
+                    ` : ''}
                     <button class="btn-danger" onclick="deleteItem('${API_BASE_URL}${endpoint}', '${item._id}')">Delete</button>
                 `;
                 grid.appendChild(card);
@@ -488,6 +501,7 @@
             e.preventDefault();
             const title = document.getElementById('s-title').value;
             const description = document.getElementById('s-description').value;
+            const link = document.getElementById('s-link').value;
             const fileInput = document.getElementById('s-file');
             let image = document.getElementById('s-url').value;
             
@@ -506,7 +520,7 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ title, description, image })
+                    body: JSON.stringify({ title, description, image, link })
                 });
                 
                 if (res.ok) {

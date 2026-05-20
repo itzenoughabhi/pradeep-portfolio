@@ -173,56 +173,50 @@ Explore Work
 <h2>Premium Photography Services</h2>
 </div>
 
-<div class="services reveal" id="dynamic-services">
-
-<div class="service">
-
-<img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200">
-
-<div class="service-overlay">
-
-<h4>Wedding</h4>
-
-<p>
-Luxury wedding storytelling with cinematic emotions and timeless memories.
-</p>
-
-</div>
-
-</div>
-
-<div class="service">
-
-<img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200">
-
-<div class="service-overlay">
-
-<h4>Pre Wedding</h4>
-
-<p>
-Romantic couple shoots crafted with cinematic concepts and artistic visuals.
-</p>
-
-</div>
-
-</div>
-
-<div class="service">
-
-<img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200">
-
-<div class="service-overlay">
-
-<h4>Portraits</h4>
-
-<p>
-Professional portraits designed for creators, influencers and brands.
-</p>
-
-</div>
-
-</div>
-
+<div class="services-wrapper reveal">
+    <button class="slider-btn prev-btn" id="service-prev">❮</button>
+    <div class="services-container">
+        <div class="services" id="dynamic-services">
+            <!-- Static Placeholders -->
+            <div class="service">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200">
+                <div class="service-overlay">
+                    <a href="#contact" class="service-title-link">
+                        <h4>Wedding</h4>
+                    </a>
+                    <p>Luxury wedding storytelling with cinematic emotions.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200">
+                <div class="service-overlay">
+                    <a href="#contact" class="service-title-link">
+                        <h4>Pre Wedding</h4>
+                    </a>
+                    <p>Romantic couple shoots crafted with cinematic concepts.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200">
+                <div class="service-overlay">
+                    <a href="#contact" class="service-title-link">
+                        <h4>Portraits</h4>
+                    </a>
+                    <p>Professional portraits designed for creators.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1200">
+                <div class="service-overlay">
+                    <a href="#contact" class="service-title-link">
+                        <h4>Events</h4>
+                    </a>
+                    <p>Capturing the energy of your social gatherings.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="slider-btn next-btn" id="service-next">❯</button>
 </div>
 
 </section>
@@ -388,6 +382,15 @@ WhatsApp
         return path.startsWith('/uploads/') ? `${API_BASE_URL}${path}` : path;
     }
 
+    // Helper to ensure links work correctly (prepends https:// if missing)
+    function formatLink(url) {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/') || url.startsWith('#')) {
+            return url;
+        }
+        return `https://${url}`;
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
         try {
             // Determine item limit based on screen size (8 for desktop, 4 for mobile)
@@ -460,31 +463,76 @@ WhatsApp
                     const servicesContainer = document.getElementById('dynamic-services');
                     servicesContainer.innerHTML = ''; // Clear default static services
                     
-                    const serviceLimit = 3;
-                    servicesData.forEach((service, index) => {
-                        const isHidden = index >= serviceLimit ? 'hidden-item services-extra' : '';
+                    servicesData.forEach((service) => {
                         servicesContainer.innerHTML += `
-                            <div class="service ${isHidden}">
+                            <div class="service">
                                 <img src="${getImgUrl(service.image)}" alt="${service.title}">
                                 <div class="service-overlay">
+                                    ${service.link ? `<a href="${formatLink(service.link)}" target="_blank" rel="noopener noreferrer" class="service-title-link">` : ''}
                                     <h4>${service.title}</h4>
+                                    ${service.link ? '</a>' : ''}
                                     <p>${service.description}</p>
                                 </div>
                             </div>
                         `;
                     });
 
-                    // Add See More Button if more than limit items
-                    if (servicesData.length > serviceLimit) {
-                        const btnContainer = document.createElement('div');
-                        btnContainer.className = 'see-more-container reveal active';
-                        btnContainer.id = 'services-see-more-container';
-                        btnContainer.innerHTML = `<button class="btn btn-gold" id="services-see-more-btn">See More</button>`;
-                        servicesContainer.parentNode.insertBefore(btnContainer, servicesContainer.nextSibling);
-                        document.getElementById('services-see-more-btn').addEventListener('click', () => {
-                            document.querySelectorAll('.services-extra').forEach(el => el.classList.remove('hidden-item'));
-                            btnContainer.style.display = 'none';
-                        });
+                    // Slider Logic
+                    let currentIdx = 0;
+                    const totalItems = servicesData.length;
+                    const visibleItems = window.innerWidth <= 950 ? 1 : 4;
+                    const maxIdx = Math.max(0, totalItems - visibleItems);
+
+                    const updateSlider = () => {
+                        const gap = 25;
+                        const itemWidth = servicesContainer.querySelector('.service').offsetWidth;
+                        servicesContainer.style.transform = `translateX(-${currentIdx * (itemWidth + gap)}px)`;
+                    };
+
+                    document.getElementById('service-next').addEventListener('click', () => {
+                        currentIdx = (currentIdx >= maxIdx) ? 0 : currentIdx + 1;
+                        updateSlider();
+                        resetAutoPlay();
+                    });
+
+                    document.getElementById('service-prev').addEventListener('click', () => {
+                        currentIdx = (currentIdx <= 0) ? maxIdx : currentIdx - 1;
+                        updateSlider();
+                        resetAutoPlay();
+                    });
+
+                    // Touch Swipe Logic for Mobile
+                    let touchStartX = 0;
+                    servicesContainer.addEventListener('touchstart', (e) => {
+                        touchStartX = e.changedTouches[0].screenX;
+                    }, { passive: true });
+
+                    servicesContainer.addEventListener('touchend', (e) => {
+                        const touchEndX = e.changedTouches[0].screenX;
+                        const diff = touchStartX - touchEndX;
+                        if (Math.abs(diff) > 50) { // Swipe threshold
+                            if (diff > 0) { // Swipe Left -> Next
+                                currentIdx = (currentIdx >= maxIdx) ? 0 : currentIdx + 1;
+                            } else { // Swipe Right -> Prev
+                                currentIdx = (currentIdx <= 0) ? maxIdx : currentIdx - 1;
+                            }
+                            updateSlider();
+                            resetAutoPlay();
+                        }
+                    }, { passive: true });
+
+                    // Auto play
+                    let autoPlay = setInterval(() => {
+                        currentIdx = (currentIdx >= maxIdx) ? 0 : currentIdx + 1;
+                        updateSlider();
+                    }, 4000);
+
+                    function resetAutoPlay() {
+                        clearInterval(autoPlay);
+                        autoPlay = setInterval(() => {
+                            currentIdx = (currentIdx >= maxIdx) ? 0 : currentIdx + 1;
+                            updateSlider();
+                        }, 4000);
                     }
                 }
             }
@@ -521,15 +569,6 @@ WhatsApp
                     if (entry.target.id === 'portfolio') {
                         const extras = document.querySelectorAll('.portfolio-extra');
                         const btnContainer = document.getElementById('portfolio-see-more-container');
-                        if (extras.length > 0 && btnContainer && btnContainer.style.display === 'none') {
-                            extras.forEach(el => el.classList.add('hidden-item'));
-                            btnContainer.style.display = 'flex';
-                        }
-                    }
-                    // Shrink Services when out of view
-                    if (entry.target.id === 'services') {
-                        const extras = document.querySelectorAll('.services-extra');
-                        const btnContainer = document.getElementById('services-see-more-container');
                         if (extras.length > 0 && btnContainer && btnContainer.style.display === 'none') {
                             extras.forEach(el => el.classList.add('hidden-item'));
                             btnContainer.style.display = 'flex';
