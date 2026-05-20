@@ -51,7 +51,7 @@
 
 - Vercel will automatically build and deploy your project
 - Once done, you'll see a success message with your deployment URL
-- Example: `https://pradeep-portfolio.vercel.app`
+- Example: `https://pradeep-portfolio-rose.vercel.app`
 
 ---
 
@@ -62,12 +62,6 @@ The `vercel.json` file has been configured with:
 ```json
 {
   "version": 2,
-  "buildCommand": "cd admin && npm install",
-  "devCommand": "cd admin && node server.js",
-  "env": {
-    "MONGO_URI": "@mongo_uri",
-    "JWT_SECRET": "@jwt_secret"
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -109,7 +103,7 @@ pradeep-portfolio/
 After deployment, verify everything works:
 
 1. **Frontend Loads**
-   - Visit: `https://your-domain.vercel.app`
+   - Visit: `https://pradeep-portfolio-rose.vercel.app`
    - Check if portfolio page loads correctly
 
 2. **Register Admin**
@@ -191,12 +185,7 @@ After deployment, verify everything works:
 
 ## API Base URLs
 
-### Local Development:
-```
-https://pradeep-portfolio-liart-xi.vercel.app//api/...
-```
-
-### After Vercel Deployment:
+### Production API URL:
 ```
 https://your-domain.vercel.app/api/...
 ```
