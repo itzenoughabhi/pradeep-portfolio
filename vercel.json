@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "cd admin && npm install",
   "rewrites": [
     {
       "source": "/api/(.*)",
