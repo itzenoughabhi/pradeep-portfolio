@@ -33,8 +33,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Serve static files for the login page
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the frontend directory with support for clean URLs (e.g. /dashboard works for dashboard.html)
+app.use(express.static(path.join(__dirname, '../frontend'), { extensions: ['html', 'htm'] }));
+// Serve uploaded images from the public/uploads directory so they are accessible via /uploads/
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 // Routes
 const serviceRoutes = require('./routes/services');
