@@ -187,7 +187,7 @@ After deployment, verify everything works:
 
 ### Local Development:
 ```
-http://localhost:5000/api/...
+https://pradeep-portfolio-liart-xi.vercel.app//api/...
 ```
 
 ### After Vercel Deployment:

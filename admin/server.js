@@ -13,10 +13,38 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// Serverless Resource Management
+let isDbConnected = false;
+
+/**
+ * Async function to check if the database connection is established.
+ * This acts as our "server started" check for serverless environments.
+ * If already connected, it prevents unnecessary re-initialization.
+ */
+async function ensureServerStarted() {
+  if (isDbConnected && mongoose.connection.readyState === 1) {
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI);
+    isDbConnected = db.connections[0].readyState === 1;
+    console.log('MongoDB connected and server resources ready');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw err;
+  }
+}
+
+// Middleware to verify server status before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await ensureServerStarted();
+    next();
+  } catch (err) {
+    res.status(500).json({ message: "Server initialization failed" });
+  }
+});
 
 // Set up Multer for local image uploads
 // Note: Local storage is ephemeral on Vercel. Files will be lost on function restart.
