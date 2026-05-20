@@ -1,0 +1,31 @@
+const express = require('express');
+const router = express.Router();
+const About = require('../models/About');
+
+// Get the current about image
+router.get('/', async (req, res) => {
+  try {
+    const about = await About.findOne();
+    res.json(about || { imageUrl: 'your-photo.jpg' }); // default fallback
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update the about image (creates it if it doesn't exist)
+router.post('/', async (req, res) => {
+  try {
+    let about = await About.findOne();
+    if (about) {
+      about.imageUrl = req.body.imageUrl;
+    } else {
+      about = new About({ imageUrl: req.body.imageUrl });
+    }
+    const savedAbout = await about.save();
+    res.status(200).json(savedAbout);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+module.exports = router;
