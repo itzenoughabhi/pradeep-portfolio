@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "buildCommand": "cd admin && npm install",
+  "devCommand": "cd admin && node server.js",
+  "env": {
+    "MONGO_URI": "@mongo_uri",
+    "JWT_SECRET": "@jwt_secret"
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/admin/server.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ]
+}
