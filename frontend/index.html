@@ -460,8 +460,9 @@ WhatsApp
                     const servicesContainer = document.getElementById('dynamic-services');
                     servicesContainer.innerHTML = ''; // Clear default static services
                     
+                    const serviceLimit = 3;
                     servicesData.forEach((service, index) => {
-                        const isHidden = index >= itemLimit ? 'hidden-item services-extra' : '';
+                        const isHidden = index >= serviceLimit ? 'hidden-item services-extra' : '';
                         servicesContainer.innerHTML += `
                             <div class="service ${isHidden}">
                                 <img src="${getImgUrl(service.image)}" alt="${service.title}">
@@ -474,7 +475,7 @@ WhatsApp
                     });
 
                     // Add See More Button if more than limit items
-                    if (servicesData.length > itemLimit) {
+                    if (servicesData.length > serviceLimit) {
                         const btnContainer = document.createElement('div');
                         btnContainer.className = 'see-more-container reveal active';
                         btnContainer.id = 'services-see-more-container';
