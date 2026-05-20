@@ -372,9 +372,9 @@ WhatsApp
 
 <script>
     // Dynamic API Base URL - works for both local and production
-    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'https://pradeep-portfolio-liart-xi.vercel.app/' 
-        : ''; // Empty string works best for production with Vercel rewrites
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+        ? 'http://localhost:5000' 
+        : '';
 
     // Helper to ensure images show up correctly whether they are external URLs or local uploads
     function getImgUrl(path) {

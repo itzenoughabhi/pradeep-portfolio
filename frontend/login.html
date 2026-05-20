@@ -119,8 +119,8 @@
 
     <script>
         // Dynamic API Base URL - works for both local and production
-        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'https://pradeep-portfolio-liart-xi.vercel.app/' 
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+            ? 'http://localhost:5000' 
             : '';
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
