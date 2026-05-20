@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const HeroImage = require('../models/HeroImage');
+const fs = require('fs');
+const path = require('path');
 
 // Get the current hero image
 router.get('/', async (req, res) => {
@@ -16,10 +18,26 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     let heroImage = await HeroImage.findOne();
+    const newImageUrl = req.body.imageUrl;
+
     if (heroImage) {
-      heroImage.imageUrl = req.body.imageUrl;
+      const oldImageUrl = heroImage.imageUrl;
+
+      // Delete old file if it's a local upload and a new one is being provided
+      if (oldImageUrl && oldImageUrl !== newImageUrl && oldImageUrl.includes('/uploads/')) {
+        try {
+          const filename = oldImageUrl.split('/uploads/').pop();
+          const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        } catch (err) {
+          console.error("Error deleting old hero image:", err);
+        }
+      }
+      heroImage.imageUrl = newImageUrl;
     } else {
-      heroImage = new HeroImage({ imageUrl: req.body.imageUrl });
+      heroImage = new HeroImage({ imageUrl: newImageUrl });
     }
     await heroImage.save();
     res.status(200).json({ message: 'Hero image updated' });

@@ -7,7 +7,7 @@ const multer = require('multer');
 require('dotenv').config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
@@ -63,4 +63,48 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.status(201).json({ imageUrl: '/uploads/' + req.file.filename });
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Admin Cleanup Route - Deletes files not referenced in the database
+app.post('/api/cleanup', async (req, res) => {
+  try {
+    const About = require('./models/About');
+    const HeroImage = require('./models/HeroImage');
+    const Logo = require('./models/Logo');
+    const Service = require('./models/Service');
+    const Portfolio = require('./models/Portfolio');
+
+    const usedFiles = new Set();
+    const extractFilename = (url) => (url && typeof url === 'string' && url.includes('/uploads/')) ? url.split('/uploads/').pop() : null;
+
+    // Gather all referenced files from DB
+    const [about, hero, logo, services, portfolios] = await Promise.all([
+      About.findOne(),
+      HeroImage.findOne(),
+      Logo.findOne(),
+      Service.find(),
+      Portfolio.find()
+    ]);
+
+    if (about) usedFiles.add(extractFilename(about.imageUrl));
+    if (hero) usedFiles.add(extractFilename(hero.imageUrl));
+    if (logo && logo.type === 'image') usedFiles.add(extractFilename(logo.value));
+    services.forEach(s => usedFiles.add(extractFilename(s.image)));
+    portfolios.forEach(p => usedFiles.add(extractFilename(p.image)));
+
+    const uploadDir = path.join(__dirname, 'public', 'uploads');
+    const filesOnDisk = fs.readdirSync(uploadDir);
+    let deletedCount = 0;
+
+    filesOnDisk.forEach(file => {
+      if (!usedFiles.has(file)) {
+        try { fs.unlinkSync(path.join(uploadDir, file)); deletedCount++; } catch(e) {}
+      }
+    });
+
+    res.json({ message: `Cleanup complete. Removed ${deletedCount} unused files.` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app;

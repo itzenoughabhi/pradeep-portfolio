@@ -1,4 +1,4 @@
-t<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -104,6 +104,7 @@ t<!DOCTYPE html>
     <main class="main-content">
         <header class="main-header">
             <h1>Dashboard Overview</h1>
+            <button class="btn-add" style="background: var(--gold);" onclick="cleanupStorage()">Clean Up Storage</button>
         </header>
 
         <div id="section-logo" class="container">
@@ -201,9 +202,9 @@ t<!DOCTYPE html>
 
     <script>
         // Dynamic API Base URL - works for both local and production
-        const API_BASE_URL = window.location.hostname === 'localhost' 
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:5000' 
-            : `${window.location.protocol}//${window.location.host}`;
+            : '';
 
         // Check if user is logged in
         const token = localStorage.getItem('adminToken');
@@ -216,6 +217,12 @@ t<!DOCTYPE html>
             window.location.href = 'login.html';
         }
 
+        // Helper to ensure images show up correctly whether they are external URLs or local uploads
+        function getImgUrl(path) {
+            if (!path) return '';
+            return path.startsWith('/uploads/') ? `${API_BASE_URL}${path}` : path;
+        }
+
         async function fetchLogo() {
             const res = await fetch(`${API_BASE_URL}/api/logo`);
             const data = await res.json();
@@ -225,7 +232,7 @@ t<!DOCTYPE html>
                 
                 const preview = document.getElementById('current-logo-preview');
                 preview.innerHTML = data.type === 'image' 
-                    ? `<img src="${data.value}" style="max-height: 70px;" alt="Logo">` 
+                    ? `<img src="${getImgUrl(data.value)}" style="max-height: 70px;" alt="Logo">` 
                     : data.value;
             }
         }
@@ -234,16 +241,20 @@ t<!DOCTYPE html>
             const res = await fetch(`${API_BASE_URL}/api/hero-image`);
             const data = await res.json();
             if (data && data.imageUrl) {
-                document.getElementById('current-hero-image').src = data.imageUrl;
+                document.getElementById('current-hero-image').src = getImgUrl(data.imageUrl);
             }
         }
 
         async function fetchAbout() {
-            const res = await fetch(`${API_BASE_URL}/api/about`);
-            const data = await res.json();
-            if (data && data.imageUrl) {
-                document.getElementById('current-about-image').src = data.imageUrl;
-                document.getElementById('a-image').value = data.imageUrl;
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/about`);
+                const data = await res.json();
+                if (data && data.imageUrl) {
+                    document.getElementById('current-about-image').src = getImgUrl(data.imageUrl);
+                    document.getElementById('a-url').value = data.imageUrl;
+                }
+            } catch (err) {
+                console.error("Error fetching about data:", err);
             }
         }
 
@@ -257,7 +268,7 @@ t<!DOCTYPE html>
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <img src="${item.image}" alt="${item.title}">
+                    <img src="${getImgUrl(item.image)}" alt="${item.title}">
                     <h4>${item.title}</h4>
                     ${isService ? `<p>${item.description}</p>` : ''}
                     <button class="btn-danger" onclick="deleteItem('${API_BASE_URL}${endpoint}', '${item._id}')">Delete</button>
@@ -333,7 +344,7 @@ t<!DOCTYPE html>
             try {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Upload failed');
-                return `${API_BASE_URL}` + data.imageUrl;
+                return data.imageUrl; // Return relative path like /uploads/filename.jpg
             } catch (parseError) {
                 throw new Error("Server returned an HTML error page. You MUST restart your Node.js server!");
             }
@@ -564,6 +575,21 @@ t<!DOCTYPE html>
                 alert('Network Error: Make sure your Node.js server is running!');
             }
         });
+
+        async function cleanupStorage() {
+            if (!confirm('This will delete all image files that are not currently being used in any section. Proceed?')) return;
+            
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/cleanup`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                alert(data.message);
+            } catch (error) {
+                alert('Cleanup failed. Check if the server is running.');
+            }
+        }
 
         function loadAll() {
             fetchLogo();

@@ -378,9 +378,15 @@ WhatsApp
 
 <script>
     // Dynamic API Base URL - works for both local and production
-    const API_BASE_URL = window.location.hostname === 'localhost' 
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:5000' 
-        : `${window.location.protocol}//${window.location.host}`;
+        : ''; // Empty string works best for production with Vercel rewrites
+
+    // Helper to ensure images show up correctly whether they are external URLs or local uploads
+    function getImgUrl(path) {
+        if (!path || path === 'your-photo.jpg') return 'your-photo.jpg';
+        return path.startsWith('/uploads/') ? `${API_BASE_URL}${path}` : path;
+    }
 
     document.addEventListener('DOMContentLoaded', async () => {
         try {
@@ -394,7 +400,7 @@ WhatsApp
                 const logoData = await logoRes.json();
                 const logoContainer = document.getElementById('dynamic-logo');
                 if (logoData.type === 'image') {
-                    logoContainer.innerHTML = `<img src="${logoData.value}" alt="Jangra VISUALS Logo">`;
+                    logoContainer.innerHTML = `<img src="${getImgUrl(logoData.value)}" alt="Jangra VISUALS Logo">`;
                 } else {
                     logoContainer.innerHTML = logoData.value;
                 }
@@ -405,7 +411,7 @@ WhatsApp
             if (heroImageRes.ok) {
                 const heroImageData = await heroImageRes.json();
                 if (heroImageData && heroImageData.imageUrl) {
-                    document.getElementById('dynamic-hero-image').src = heroImageData.imageUrl;
+                    document.getElementById('dynamic-hero-image').src = getImgUrl(heroImageData.imageUrl);
                 }
             }
 
@@ -414,7 +420,7 @@ WhatsApp
             if (aboutRes.ok) {
                 const aboutData = await aboutRes.json();
                 if (aboutData && aboutData.imageUrl && aboutData.imageUrl !== 'your-photo.jpg') {
-                    document.getElementById('dynamic-about-image').src = aboutData.imageUrl;
+                    document.getElementById('dynamic-about-image').src = getImgUrl(aboutData.imageUrl);
                 }
             }
 
@@ -428,7 +434,7 @@ WhatsApp
                     
                     portfolioData.forEach((item, index) => {
                         const isHidden = index >= itemLimit ? 'hidden-item portfolio-extra' : '';
-                        portfolioContainer.innerHTML += `<img src="${item.image}" alt="${item.title}" class="${isHidden}">`;
+                        portfolioContainer.innerHTML += `<img src="${getImgUrl(item.image)}" alt="${item.title}" class="${isHidden}">`;
                     });
 
                     // Add See More Button if more than limit items
@@ -458,7 +464,7 @@ WhatsApp
                         const isHidden = index >= itemLimit ? 'hidden-item services-extra' : '';
                         servicesContainer.innerHTML += `
                             <div class="service ${isHidden}">
-                                <img src="${service.image}" alt="${service.title}">
+                                <img src="${getImgUrl(service.image)}" alt="${service.title}">
                                 <div class="service-overlay">
                                     <h4>${service.title}</h4>
                                     <p>${service.description}</p>

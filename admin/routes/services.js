@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Service = require('../models/Service');
+const fs = require('fs');
+const path = require('path');
 
 // Get all services
 router.get('/', async (req, res) => {
@@ -26,6 +28,25 @@ router.post('/', async (req, res) => {
 // Update a service
 router.put('/:id', async (req, res) => {
   try {
+    const service = await Service.findById(req.params.id);
+    if (!service) return res.status(404).json({ message: 'Service not found' });
+
+    const oldImage = service.image;
+    const newImage = req.body.image;
+
+    // Delete old file if it's a local upload and the image is being changed
+    if (oldImage && oldImage !== newImage && oldImage.includes('/uploads/')) {
+      try {
+        const filename = oldImage.split('/uploads/').pop();
+        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      } catch (err) {
+        console.error("Error deleting replaced service image:", err);
+      }
+    }
+
     const updatedService = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedService);
   } catch (err) {
@@ -36,6 +57,16 @@ router.put('/:id', async (req, res) => {
 // Delete a service
 router.delete('/:id', async (req, res) => {
   try {
+    const service = await Service.findById(req.params.id);
+    if (service && service.image && service.image.includes('/uploads/')) {
+      try {
+        const filename = service.image.split('/uploads/').pop();
+        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      } catch (err) {
+        console.error("Error deleting service image file:", err);
+      }
+    }
     await Service.findByIdAndDelete(req.params.id);
     res.json({ message: 'Service deleted' });
   } catch (err) {
