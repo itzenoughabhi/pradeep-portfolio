@@ -118,13 +118,18 @@
     </div>
 
     <script>
+        // Dynamic API Base URL - works for both local and production
+        const API_BASE_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000' 
+            : `${window.location.protocol}//${window.location.host}`;
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
             try {
-                const response = await fetch('http://localhost:5000/api/auth/login', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })

@@ -377,6 +377,11 @@ WhatsApp
 </a>
 
 <script>
+    // Dynamic API Base URL - works for both local and production
+    const API_BASE_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:5000' 
+        : `${window.location.protocol}//${window.location.host}`;
+
     document.addEventListener('DOMContentLoaded', async () => {
         try {
             // Determine item limit based on screen size (8 for desktop, 4 for mobile)
@@ -384,7 +389,7 @@ WhatsApp
             const itemLimit = isMobile ? 4 : 8;
 
             // Fetch Logo from Database
-            const logoRes = await fetch('http://localhost:5000/api/logo');
+            const logoRes = await fetch(`${API_BASE_URL}/api/logo`);
             if (logoRes.ok) {
                 const logoData = await logoRes.json();
                 const logoContainer = document.getElementById('dynamic-logo');
@@ -396,7 +401,7 @@ WhatsApp
             }
 
             // Fetch Hero Image from Database
-            const heroImageRes = await fetch('http://localhost:5000/api/hero-image');
+            const heroImageRes = await fetch(`${API_BASE_URL}/api/hero-image`);
             if (heroImageRes.ok) {
                 const heroImageData = await heroImageRes.json();
                 if (heroImageData && heroImageData.imageUrl) {
@@ -405,7 +410,7 @@ WhatsApp
             }
 
             // Fetch About Image from Database
-            const aboutRes = await fetch('http://localhost:5000/api/about');
+            const aboutRes = await fetch(`${API_BASE_URL}/api/about`);
             if (aboutRes.ok) {
                 const aboutData = await aboutRes.json();
                 if (aboutData && aboutData.imageUrl && aboutData.imageUrl !== 'your-photo.jpg') {
@@ -414,7 +419,7 @@ WhatsApp
             }
 
             // Fetch Portfolio Images from Database
-            const portfolioRes = await fetch('http://localhost:5000/api/portfolio');
+            const portfolioRes = await fetch(`${API_BASE_URL}/api/portfolio`);
             if (portfolioRes.ok) {
                 const portfolioData = await portfolioRes.json();
                 if (portfolioData.length > 0) {
@@ -442,7 +447,7 @@ WhatsApp
             }
 
             // Fetch Services from Database
-            const servicesRes = await fetch('http://localhost:5000/api/services');
+            const servicesRes = await fetch(`${API_BASE_URL}/api/services`);
             if (servicesRes.ok) {
                 const servicesData = await servicesRes.json();
                 if (servicesData.length > 0) {
@@ -478,7 +483,7 @@ WhatsApp
             }
 
             // Fetch Reviews from Database
-            const reviewsRes = await fetch('http://localhost:5000/api/reviews');
+            const reviewsRes = await fetch(`${API_BASE_URL}/api/reviews`);
             if (reviewsRes.ok) {
                 const reviewsData = await reviewsRes.json();
                 if (reviewsData.length > 0) {
@@ -547,7 +552,7 @@ WhatsApp
         const rating = ratingInput.value;
 
         try {
-            const res = await fetch('http://localhost:5000/api/reviews', {
+            const res = await fetch(`${API_BASE_URL}/api/reviews`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, rating, message })

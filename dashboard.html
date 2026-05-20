@@ -200,6 +200,11 @@
     </main>
 
     <script>
+        // Dynamic API Base URL - works for both local and production
+        const API_BASE_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000' 
+            : `${window.location.protocol}//${window.location.host}`;
+
         // Check if user is logged in
         const token = localStorage.getItem('adminToken');
         if (!token) {
@@ -212,7 +217,7 @@
         }
 
         async function fetchLogo() {
-            const res = await fetch('http://localhost:5000/api/logo');
+            const res = await fetch(`${API_BASE_URL}/api/logo`);
             const data = await res.json();
             if (data) {
                 document.querySelector(`input[name="logoType"][value="${data.type}"]`).checked = true;
@@ -226,7 +231,7 @@
         }
 
         async function fetchHeroImage() {
-            const res = await fetch('http://localhost:5000/api/hero-image');
+            const res = await fetch(`${API_BASE_URL}/api/hero-image`);
             const data = await res.json();
             if (data && data.imageUrl) {
                 document.getElementById('current-hero-image').src = data.imageUrl;
@@ -234,7 +239,7 @@
         }
 
         async function fetchAbout() {
-            const res = await fetch('http://localhost:5000/api/about');
+            const res = await fetch(`${API_BASE_URL}/api/about`);
             const data = await res.json();
             if (data && data.imageUrl) {
                 document.getElementById('current-about-image').src = data.imageUrl;
@@ -243,7 +248,7 @@
         }
 
         async function fetchData(endpoint, gridId, isService = false) {
-            const res = await fetch('http://localhost:5000' + endpoint);
+            const res = await fetch(`${API_BASE_URL}${endpoint}`);
             const data = await res.json();
             const grid = document.getElementById(gridId);
             grid.innerHTML = '';
@@ -255,14 +260,14 @@
                     <img src="${item.image}" alt="${item.title}">
                     <h4>${item.title}</h4>
                     ${isService ? `<p>${item.description}</p>` : ''}
-                    <button class="btn-danger" onclick="deleteItem('http://localhost:5000${endpoint}', '${item._id}')">Delete</button>
+                    <button class="btn-danger" onclick="deleteItem('${API_BASE_URL}${endpoint}', '${item._id}')">Delete</button>
                 `;
                 grid.appendChild(card);
             });
         }
 
         async function fetchReviews() {
-            const res = await fetch('http://localhost:5000/api/reviews');
+            const res = await fetch(`${API_BASE_URL}/api/reviews`);
             const data = await res.json();
             const grid = document.getElementById('reviewGrid');
             grid.innerHTML = '';
@@ -284,7 +289,7 @@
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn-danger';
                 deleteBtn.innerText = 'Delete Review';
-                deleteBtn.onclick = () => deleteItem('http://localhost:5000/api/reviews', item._id);
+                deleteBtn.onclick = () => deleteItem(`${API_BASE_URL}/api/reviews`, item._id);
 
                 card.appendChild(editBtn);
                 card.appendChild(deleteBtn);
@@ -320,7 +325,7 @@
         async function uploadImageFile(file) {
             const formData = new FormData();
             formData.append('image', file);
-            const res = await fetch('http://localhost:5000/api/upload', {
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
@@ -328,7 +333,7 @@
             try {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Upload failed');
-                return 'http://localhost:5000' + data.imageUrl;
+                return `${API_BASE_URL}` + data.imageUrl;
             } catch (parseError) {
                 throw new Error("Server returned an HTML error page. You MUST restart your Node.js server!");
             }
@@ -349,7 +354,7 @@
                 if (fileInput.files.length > 0) {
                     imageUrl = await uploadImageFile(fileInput.files[0]);
                 }
-                const res = await fetch('http://localhost:5000/api/hero-image', {
+                const res = await fetch(`${API_BASE_URL}/api/hero-image`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ imageUrl })
@@ -374,7 +379,7 @@
             const value = document.getElementById('l-value').value;
             
             try {
-                const res = await fetch('http://localhost:5000/api/logo', {
+                const res = await fetch(`${API_BASE_URL}/api/logo`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ type, value })
@@ -410,7 +415,7 @@
                 if (fileInput.files.length > 0) {
                     imageUrl = await uploadImageFile(fileInput.files[0]);
                 }
-                const res = await fetch('http://localhost:5000/api/about', {
+                const res = await fetch(`${API_BASE_URL}/api/about`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -447,7 +452,7 @@
                 if (fileInput.files.length > 0) {
                     image = await uploadImageFile(fileInput.files[0]);
                 }
-                const res = await fetch('http://localhost:5000/api/portfolio', {
+                const res = await fetch(`${API_BASE_URL}/api/portfolio`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -484,7 +489,7 @@
                 if (fileInput.files.length > 0) {
                     image = await uploadImageFile(fileInput.files[0]);
                 }
-                const res = await fetch('http://localhost:5000/api/services', {
+                const res = await fetch(`${API_BASE_URL}/api/services`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -513,7 +518,7 @@
             const message = document.getElementById('er-message').value;
             
             try {
-                const res = await fetch(`http://localhost:5000/api/reviews/${id}`, {
+                const res = await fetch(`${API_BASE_URL}/api/reviews/${id}`, {
                     method: 'PUT',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -542,7 +547,7 @@
             const newPassword = document.getElementById('cp-new-password').value;
             
             try {
-                const res = await fetch('http://localhost:5000/api/auth/change-password', {
+                const res = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ username, oldPassword, newPassword })
