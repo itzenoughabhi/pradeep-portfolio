@@ -48,7 +48,12 @@ app.use(async (req, res, next) => {
 
 // Use memory storage for Multer to handle the file buffer
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 4.5 * 1024 * 1024 // Limit file size to 4.5MB (Vercel Hobby plan limit)
+  }
+});
 
 // Serve static files from the frontend directory with support for clean URLs (e.g. /dashboard works for dashboard.html)
 app.use(express.static(path.join(__dirname, '../frontend'), { extensions: ['html', 'htm'] }));
@@ -71,17 +76,28 @@ app.use('/api/logo', logoRoutes);
 app.use('/api/hero-image', heroImageRoutes);
 
 // Image Upload API Route
-app.post('/api/upload', upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+app.post('/api/upload', (req, res) => {
+  upload.single('image')(req, res, async (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'File is too large. Maximum size allowed is 4.5MB.' });
+      }
+      return res.status(400).json({ message: err.message });
+    } else if (err) {
+      return res.status(500).json({ message: err.message });
     }
-    const filename = `${Date.now()}-${req.file.originalname}`;
-    const blob = await put(filename, req.file.buffer, { access: 'public' });
-    res.status(201).json({ imageUrl: blob.url });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      const filename = `${Date.now()}-${req.file.originalname}`;
+      const blob = await put(filename, req.file.buffer, { access: 'public' });
+      res.status(201).json({ imageUrl: blob.url });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
 });
 
 // Admin Cleanup Route - Deletes files not referenced in the database

@@ -38,6 +38,12 @@
    **Variable Name:** `PORT`
    **Value:** `3000`
 
+   **Variable Name:** `BLOB_READ_WRITE_TOKEN`
+   **Value:** `vercel_blob_rw_EIRQQruK7B7wvPXl_hTFAD0jtxTzn0Aa6GNS17Nb3IWTJbU`
+
+   **Variable Name:** `BLOB_STORE_ID`
+   **Value:** `store_EIRQQruK7B7wvPXl`
+
 3. Click "Add" for each variable
 4. Click "Deploy"
 
@@ -221,4 +227,3 @@ Update frontend API calls to use the new URL after deployment!
 3. Configure environment variables in Vercel
 4. Deploy and test
 5. Update API endpoints in frontend if needed
-

@@ -16,7 +16,7 @@ router.post('/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    // Create JWT token
+    // Create JWT token using environment variable or fallback
     const token = jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET || 'your_fallback_secret', { expiresIn: '2h' });
     res.json({ token, admin: { id: admin._id, username: admin.username, role: admin.role } });
   } catch (err) {

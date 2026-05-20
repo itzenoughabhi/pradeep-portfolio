@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Logo = require('../models/Logo');
-const fs = require('fs');
-const path = require('path');
+const { del } = require('@vercel/blob');
 
 // Get the current logo
 router.get('/', async (req, res) => {
@@ -23,14 +22,12 @@ router.post('/', async (req, res) => {
     if (logo) {
       const oldValue = logo.value;
 
-      // If the old logo was an uploaded image and is being replaced, delete the file
-      if (oldValue && oldValue !== newValue && oldValue.includes('/uploads/')) {
+      // If the old logo was an uploaded blob and is being replaced, delete it
+      if (oldValue && oldValue !== newValue && oldValue.includes('public.blob.vercel-storage.com')) {
         try {
-          const filename = oldValue.split('/uploads/').pop();
-          const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+          await del(oldValue);
         } catch (err) {
-          console.error("Error deleting old logo file:", err);
+          console.error("Error deleting old logo blob:", err);
         }
       }
 
