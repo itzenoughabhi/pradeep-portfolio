@@ -121,7 +121,7 @@
         // Dynamic API Base URL - works for both local and production
         const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
             ? 'http://localhost:5000' 
-            : 'https://pradeep-portfolio-rose.vercel.app';
+            : '';
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -135,7 +135,13 @@
                     body: JSON.stringify({ username, password })
                 });
                 
-                const data = await response.json();
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch (jsonErr) {
+                    throw new Error('Server returned invalid response');
+                }
+
                 if (response.ok) {
                     localStorage.setItem('adminToken', data.token);
                     alert('Login successful! Redirecting to dashboard...');
@@ -144,7 +150,7 @@
                     document.getElementById('errorMessage').innerText = data.message || 'Login failed';
                 }
             } catch (err) {
-                document.getElementById('errorMessage').innerText = 'Network error: Make sure your node server is running!';
+                document.getElementById('errorMessage').innerText = err.message || 'Network error: Make sure your server is running!';
             }
         });
 
