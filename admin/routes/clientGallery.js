@@ -6,7 +6,6 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const archiver = require('archiver');
 const ClientGallery = require('../models/ClientGallery');
 const Admin = require('../models/Admin');
 
@@ -330,6 +329,8 @@ router.get('/:slug/download-all', verifyClientAccess, async (req, res) => {
     gallery.downloadCount = (gallery.downloadCount || 0) + 1;
     await gallery.save();
 
+    const archiverModule = await import('archiver');
+    const archiver = archiverModule.default || archiverModule;
     const archive = typeof archiver === 'function'
       ? archiver('zip', { zlib: { level: 6 } })
       : (archiver.ZipArchive ? new archiver.ZipArchive({ zlib: { level: 6 } }) : new archiver.Archiver('zip', { zlib: { level: 6 } }));

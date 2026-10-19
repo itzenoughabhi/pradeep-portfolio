@@ -209,6 +209,7 @@ app.post('/api/cleanup', async (req, res) => {
 
 // Only listen if run directly as the main process (not imported or in serverless)
 if (require.main === module && !process.env.VERCEL) {
+  ensureServerStarted().catch(err => console.error('Initial DB connect error:', err.message));
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
