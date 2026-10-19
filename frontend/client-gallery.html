@@ -175,9 +175,12 @@
     async function loadPublicAlbums() {
       try {
         const res = await fetch(`${API_BASE_URL}/api/client-gallery/public/all`);
+        if (!res.ok) {
+          throw new Error(`Server returned HTTP ${res.status}`);
+        }
         const data = await res.json();
 
-        if (res.ok && Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data) && data.length > 0) {
           publicAlbums = data;
           renderAlbumsGrid(data);
 
@@ -194,6 +197,7 @@
           albumsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text-muted);">No client collections published yet.</div>';
         }
       } catch (err) {
+        console.error('Failed to load client collections:', err);
         albumsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: #ef4444;">Unable to load collections at this time.</div>';
       }
     }

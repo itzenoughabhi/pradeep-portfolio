@@ -21,13 +21,15 @@ let isDbConnected = false;
  * This acts as our "server started" check for serverless environments.
  * If already connected, it prevents unnecessary re-initialization.
  */
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://abhishek1432h_db_user:Abhishek.9055@cluster0.fmnyr6j.mongodb.net/test?appName=Cluster0';
+
 async function ensureServerStarted() {
   if (isDbConnected && mongoose.connection.readyState === 1) {
     return;
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI);
+    const db = await mongoose.connect(MONGO_URI);
     isDbConnected = db.connections[0].readyState === 1;
     console.log('MongoDB connected and server resources ready');
   } catch (err) {
@@ -42,8 +44,18 @@ app.use(async (req, res, next) => {
     await ensureServerStarted();
     next();
   } catch (err) {
-    res.status(500).json({ message: "Server initialization failed" });
+    console.error('ensureServerStarted error:', err);
+    res.status(500).json({ message: "Server initialization failed", error: err.message });
   }
+});
+
+// Health check endpoint
+app.get(['/api/health', '/health', '/api'], (req, res) => {
+  res.json({
+    status: 'ok',
+    server: 'active',
+    db: mongoose.connection.readyState === 1
+  });
 });
 
 // Use memory storage for Multer to handle the file buffer
@@ -169,8 +181,8 @@ app.post('/api/cleanup', async (req, res) => {
   }
 });
 
-// Only listen if not running on Vercel
-if (!process.env.VERCEL) {
+// Only listen if run directly as the main process (not imported or in serverless)
+if (require.main === module && !process.env.VERCEL) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
