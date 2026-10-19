@@ -479,11 +479,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-  <!-- Main JavaScript Application Logic -->
   <script>
-    const API_BASE_URL = (window.location.protocol === 'file:')
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
       ? 'http://localhost:5000'
-      : (window.location.origin || 'http://localhost:5000');
+      : 'https://pradeep-portfolio-rose.vercel.app';
 
     let heroPreviews = [
       "/images/hero-wedding-procession.jpg",
