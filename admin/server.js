@@ -91,10 +91,18 @@ const upload = multer({
   }
 });
 
-// Serve static files from the frontend directory locally
-if (!process.env.VERCEL) {
-  app.use(express.static(path.join(__dirname, '../frontend'), { extensions: ['html', 'htm'] }));
-}
+// Serve static files from public and frontend directories
+const fs = require('fs');
+app.use(express.static(path.join(__dirname, '../public'), { extensions: ['html', 'htm'] }));
+app.use(express.static(path.join(__dirname, '../frontend'), { extensions: ['html', 'htm'] }));
+
+// Root homepage route
+app.get(['/', '/index', '/index.html'], (req, res) => {
+  const p1 = path.join(__dirname, '../public/index.html');
+  const p2 = path.join(__dirname, '../frontend/index.html');
+  if (fs.existsSync(p1)) return res.sendFile(p1);
+  return res.sendFile(p2);
+});
 
 // Routes
 const serviceRoutes = require('./routes/services');

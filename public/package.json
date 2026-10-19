@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static frontend assets served by backend",
+  "scripts": {
+    "start": "node ../admin/server.js",
+    "dev": "node ../admin/server.js"
+  }
+}
