@@ -17,6 +17,10 @@ module.exports = (req, res) => {
         });
     }
 
+    if (req.headers && req.headers['x-matched-path']) {
+        req.url = req.headers['x-matched-path'];
+    }
+
     try {
         return app(req, res);
     } catch (err) {
