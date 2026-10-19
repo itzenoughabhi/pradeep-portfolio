@@ -68,17 +68,17 @@ const logoRoutes = require('./routes/logo');
 const heroImageRoutes = require('./routes/heroImage');
 const clientGalleryRoutes = require('./routes/clientGallery');
 
-app.use('/api/services', serviceRoutes);
-app.use('/api/portfolio', portfolioRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/about', aboutRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/logo', logoRoutes);
-app.use('/api/hero-image', heroImageRoutes);
-app.use('/api/client-gallery', clientGalleryRoutes);
+['/api/services', '/services'].forEach(p => app.use(p, serviceRoutes));
+['/api/portfolio', '/portfolio'].forEach(p => app.use(p, portfolioRoutes));
+['/api/auth', '/auth'].forEach(p => app.use(p, authRoutes));
+['/api/about', '/about'].forEach(p => app.use(p, aboutRoutes));
+['/api/reviews', '/reviews'].forEach(p => app.use(p, reviewRoutes));
+['/api/logo', '/logo'].forEach(p => app.use(p, logoRoutes));
+['/api/hero-image', '/hero-image'].forEach(p => app.use(p, heroImageRoutes));
+['/api/client-gallery', '/client-gallery'].forEach(p => app.use(p, clientGalleryRoutes));
 
 // Image Upload API Route
-app.post('/api/upload', (req, res) => {
+const uploadHandler = (req, res) => {
   upload.single('image')(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_SIZE') {
@@ -93,14 +93,31 @@ app.post('/api/upload', (req, res) => {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
       }
-      const filename = `${Date.now()}-${req.file.originalname}`;
-      const blob = await put(filename, req.file.buffer, { access: 'public' });
-      res.status(201).json({ imageUrl: blob.url });
+
+      // 1. Try uploading to Vercel Blob storage if token is present
+      if (process.env.BLOB_READ_WRITE_TOKEN) {
+        try {
+          const filename = `${Date.now()}-${req.file.originalname}`;
+          const blob = await put(filename, req.file.buffer, { access: 'public' });
+          return res.status(201).json({ imageUrl: blob.url });
+        } catch (blobErr) {
+          console.warn('Vercel Blob upload failed, falling back to base64 database storage:', blobErr.message);
+        }
+      }
+
+      // 2. Reliable Database Fallback: Store directly as base64 Data URL
+      const mimeType = req.file.mimetype || 'image/jpeg';
+      const base64Data = req.file.buffer.toString('base64');
+      const dataUrl = `data:${mimeType};base64,${base64Data}`;
+      res.status(201).json({ imageUrl: dataUrl });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   });
-});
+};
+
+app.post('/api/upload', uploadHandler);
+app.post('/upload', uploadHandler);
 
 // Admin Cleanup Route - Deletes files not referenced in the database
 app.post('/api/cleanup', async (req, res) => {
