@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Collections Portal — Jangra.visual</title>
+  <meta name="description" content="Private client collections and high-resolution galleries by Jangra.visual. Enter your commissioned passkey to access your photographs.">
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- NAVIGATION -->
+  <header class="site-header scrolled" id="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-title">Jangra<span>.</span>visual</div>
+        <div class="brand-subtitle">PHOTOGRAPHY & FILMS</div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">← Back to Portfolio</a></li>
+          <li><a href="index.html#contact">Inquire</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main style="flex: 1; display: flex; flex-direction: column;">
+
+    <!-- VIEW 1: COLLECTIONS GRID (2 OR 3 CARDS) -->
+    <section class="client-collections-hero" id="view-collections-grid">
+      <div class="container">
+        <div class="section-header" style="text-align: left; margin-bottom: 20px;">
+          <span class="section-tag">PRIVATE COMMISSIONS</span>
+          <h1 class="section-title" style="margin-top: 10px;">Client <em>Collections</em></h1>
+          <p class="section-desc" style="max-width: 600px;">
+            Select your private collection below. Enter your commissioned passkey to unlock and view your full high-resolution gallery.
+          </p>
+        </div>
+
+        <div class="client-collections-grid" id="albums-container">
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text-muted);">
+            Loading client collections...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: UNLOCKED ALBUM PHOTOS -->
+    <section id="view-unlocked-album" style="display: none; padding-top: 40px; padding-bottom: 80px;">
+      <div class="container">
+        
+        <!-- Album Header -->
+        <div class="client-gallery-header">
+          <div class="client-header-flex">
+            <div class="client-header-info">
+              <button class="btn btn-outline" id="btn-back-to-albums" style="margin-bottom: 18px; padding: 8px 16px; font-size: 12px;">
+                ← Back to All Collections
+              </button>
+              <span class="section-tag" id="gallery-client-tag">CLIENT COLLECTION</span>
+              <h1 id="gallery-title">Collection Title</h1>
+              <div class="client-header-meta">
+                <span id="gallery-photo-count">0 Photographs</span>
+                <span>•</span>
+                <span id="gallery-date">Delivered</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;">
+              <button class="btn btn-primary" id="btn-download-all">
+                Download Collection (ZIP)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photos Grid -->
+        <div class="client-photos-grid" id="client-photos-container">
+          <!-- Dynamically populated when unlocked -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PASSWORD UNLOCK MODAL -->
+  <div class="pwd-modal-overlay" id="pwd-modal">
+    <div class="pwd-modal-box">
+      <button class="pwd-modal-close" id="btn-modal-close" aria-label="Close modal">✕</button>
+      <span class="section-tag">SECURE ACCESS</span>
+      <h3 style="font-family: var(--font-editorial); font-size: 26px; font-weight: 400; margin: 10px 0 6px 0; color: var(--text-primary);" id="modal-album-name">
+        Unlock Collection
+      </h3>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 22px;" id="modal-album-sub">
+        Enter the private access password provided by the photographer to view this collection.
+      </p>
+
+      <form id="pwd-unlock-form">
+        <input type="hidden" id="modal-slug">
+        
+        <div class="client-input-group" style="margin-bottom: 14px;">
+          <label for="modal-pwd-input" style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 600;">
+            Collection Password
+          </label>
+          <input type="password" id="modal-pwd-input" class="client-input" placeholder="Enter password (e.g. 1234)" required autocomplete="current-password" style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-light); border-radius: 6px; font-family: inherit; font-size: 14px; background: #fafafa;">
+        </div>
+
+        <div id="modal-error-msg" style="display: none; color: #ef4444; font-size: 13px; margin-bottom: 16px; line-height: 1.4;"></div>
+
+        <button type="submit" class="btn btn-primary" id="btn-modal-submit" style="width: 100%; justify-content: center; padding: 14px;">
+          Unlock & Access Photos →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX MODAL FOR CLIENT PREVIEW -->
+  <div class="lightbox-modal" id="client-lightbox">
+    <button class="lightbox-close" id="c-lightbox-close">✕</button>
+    <button class="lightbox-prev" id="c-lightbox-prev">❮</button>
+    <div class="lightbox-content">
+      <img id="c-lightbox-img" src="" alt="Client Photo Preview">
+      <div class="lightbox-caption" id="c-lightbox-caption"></div>
+      <div style="margin-top: 16px;">
+        <button class="btn btn-primary" id="c-lightbox-download" style="padding: 10px 20px; font-size: 12px;">
+          Download Photo
+        </button>
+      </div>
+    </div>
+    <button class="lightbox-next" id="c-lightbox-next">❯</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="brand">
+        <div class="brand-title">Jangra<span>.</span>visual</div>
+        <div class="brand-subtitle">PHOTOGRAPHY & FILMS</div>
+      </div>
+      <div class="footer-copy">
+        All photographs are copyrighted by Jangra.visual & licensed to client.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000'
+      : '';
+
+    let publicAlbums = [];
+    let currentPhotos = [];
+    let currentPhotoIdx = 0;
+    let activeSlug = null;
+
+    const viewGrid = document.getElementById('view-collections-grid');
+    const viewAlbum = document.getElementById('view-unlocked-album');
+    const albumsContainer = document.getElementById('albums-container');
+
+    const pwdModal = document.getElementById('pwd-modal');
+    const modalAlbumName = document.getElementById('modal-album-name');
+    const modalAlbumSub = document.getElementById('modal-album-sub');
+    const modalSlugInput = document.getElementById('modal-slug');
+    const modalPwdInput = document.getElementById('modal-pwd-input');
+    const modalErrorMsg = document.getElementById('modal-error-msg');
+    const btnModalSubmit = document.getElementById('btn-modal-submit');
+    const pwdForm = document.getElementById('pwd-unlock-form');
+
+    // 1. Fetch all public albums to display in 2 or 3 grid
+    async function loadPublicAlbums() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/client-gallery/public/all`);
+        const data = await res.json();
+
+        if (res.ok && Array.isArray(data) && data.length > 0) {
+          publicAlbums = data;
+          renderAlbumsGrid(data);
+
+          // If URL parameter ?gallery=slug exists, open modal for it
+          const urlParams = new URLSearchParams(window.location.search);
+          const reqSlug = urlParams.get('gallery') || urlParams.get('id');
+          if (reqSlug) {
+            const match = data.find(a => a.slug === reqSlug.trim());
+            if (match) {
+              openPasswordModal(match.slug, match.title, match.clientName);
+            }
+          }
+        } else {
+          albumsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text-muted);">No client collections published yet.</div>';
+        }
+      } catch (err) {
+        albumsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: #ef4444;">Unable to load collections at this time.</div>';
+      }
+    }
+
+    // 2. Render Album Cards (2 or 3 Column Grid)
+    function renderAlbumsGrid(albums) {
+      albumsContainer.innerHTML = '';
+      albums.forEach(album => {
+        const card = document.createElement('div');
+        card.className = 'client-collection-card';
+        card.onclick = () => openPasswordModal(album.slug, album.title, album.clientName);
+
+        const coverSrc = album.coverImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200';
+
+        card.innerHTML = `
+          <div class="client-collection-cover">
+            <img src="${coverSrc}" alt="${album.title}" loading="lazy">
+            <div class="client-lock-badge">
+              <span>🔒</span> Private Collection
+            </div>
+          </div>
+          <div class="client-collection-body">
+            <div class="client-collection-meta">${album.clientName}</div>
+            <h3 class="client-collection-title">${album.title}</h3>
+            <div class="client-collection-client">Commissioned Gallery</div>
+            <div class="client-collection-footer">
+              <span class="client-photo-badge">📸 ${album.photoCount || 0} Photographs</span>
+              <span class="client-unlock-link">Unlock 🔒 →</span>
+            </div>
+          </div>
+        `;
+        albumsContainer.appendChild(card);
+      });
+    }
+
+    // 3. Open Password Modal for selected Album
+    function openPasswordModal(slug, title, clientName) {
+      modalSlugInput.value = slug;
+      modalAlbumName.innerText = title;
+      modalAlbumSub.innerHTML = `Enter the private password for <strong>${clientName}</strong> to unlock this gallery.`;
+      modalPwdInput.value = '';
+      modalErrorMsg.style.display = 'none';
+      pwdModal.classList.add('active');
+      modalPwdInput.focus();
+    }
+
+    // Close Modal
+    function closePasswordModal() {
+      pwdModal.classList.remove('active');
+      modalErrorMsg.style.display = 'none';
+      modalPwdInput.value = '';
+    }
+
+    document.getElementById('btn-modal-close').addEventListener('click', closePasswordModal);
+    pwdModal.addEventListener('click', (e) => {
+      if (e.target === pwdModal) closePasswordModal();
+    });
+
+    // 4. Handle Password Submit & Unlock
+    pwdForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      modalErrorMsg.style.display = 'none';
+      btnModalSubmit.innerText = 'Unlocking...';
+      btnModalSubmit.disabled = true;
+
+      const slug = modalSlugInput.value;
+      const password = modalPwdInput.value;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/client-gallery/unlock`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          closePasswordModal();
+          showUnlockedAlbum(data.gallery);
+        } else {
+          modalErrorMsg.innerText = data.message || 'Incorrect password. Please try again.';
+          modalErrorMsg.style.display = 'block';
+          modalPwdInput.select();
+        }
+      } catch (err) {
+        modalErrorMsg.innerText = 'Network error. Please try again.';
+        modalErrorMsg.style.display = 'block';
+      } finally {
+        btnModalSubmit.innerText = 'Unlock & Access Photos →';
+        btnModalSubmit.disabled = false;
+      }
+    });
+
+    // 5. Render Unlocked Album Photos
+    function showUnlockedAlbum(gallery) {
+      activeSlug = gallery.slug;
+      viewGrid.style.display = 'none';
+      viewAlbum.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      document.getElementById('gallery-client-tag').innerText = `${gallery.clientName.toUpperCase()} • PRIVATE ARCHIVE`;
+      document.getElementById('gallery-title').innerText = gallery.title;
+      document.getElementById('gallery-photo-count').innerText = `${gallery.photos ? gallery.photos.length : 0} High-Resolution Photographs`;
+      document.getElementById('gallery-date').innerText = new Date(gallery.createdAt).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      currentPhotos = gallery.photos || [];
+      const container = document.getElementById('client-photos-container');
+      container.innerHTML = '';
+
+      if (currentPhotos.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 15px; grid-column: 1 / -1; text-align: center; padding: 60px;">No photographs in this collection yet.</p>';
+        return;
+      }
+
+      currentPhotos.forEach((photo, idx) => {
+        const card = document.createElement('div');
+        card.className = 'client-photo-card';
+        card.innerHTML = `
+          <div class="client-photo-media" onclick="openClientLightbox(${idx})">
+            <img src="${photo.url}" alt="${photo.title || 'Client Photo'}" loading="lazy">
+            <span class="client-photo-zoom-tag">🔍 Click to Preview</span>
+          </div>
+          <div class="client-photo-footer">
+            <div class="client-photo-title-wrap">
+              <span class="client-photo-title-text">${photo.title || `Photograph ${idx + 1}`}</span>
+              <span class="client-photo-sub-text">High-Resolution Original</span>
+            </div>
+            <a href="${API_BASE_URL}/api/client-gallery/${activeSlug}/download/${photo._id}" 
+               class="btn-photo-download" 
+               title="Download High-Res Photo" 
+               download>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download
+            </a>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Bulk download button ("Download All")
+      const btnDownloadAll = document.getElementById('btn-download-all');
+      if (gallery.allowBulkDownload !== false && currentPhotos.length > 0) {
+        btnDownloadAll.style.display = 'inline-flex';
+        btnDownloadAll.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download All Photos (ZIP)
+        `;
+        btnDownloadAll.onclick = () => {
+          btnDownloadAll.innerHTML = `⏳ Preparing ZIP Archive...`;
+          btnDownloadAll.disabled = true;
+          window.location.href = `${API_BASE_URL}/api/client-gallery/${activeSlug}/download-all`;
+          setTimeout(() => {
+            btnDownloadAll.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download All Photos (ZIP)
+            `;
+            btnDownloadAll.disabled = false;
+          }, 4000);
+        };
+      } else {
+        btnDownloadAll.style.display = 'none';
+      }
+    }
+
+    // 6. Return to All Collections Button
+    document.getElementById('btn-back-to-albums').addEventListener('click', () => {
+      viewAlbum.style.display = 'none';
+      viewGrid.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // 7. Lightbox Preview Handlers
+    const cLightbox = document.getElementById('client-lightbox');
+    const cImg = document.getElementById('c-lightbox-img');
+    const cCaption = document.getElementById('c-lightbox-caption');
+    const cDownloadBtn = document.getElementById('c-lightbox-download');
+
+    function openClientLightbox(idx) {
+      currentPhotoIdx = idx;
+      updateClientLightbox();
+      cLightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeClientLightbox() {
+      cLightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function updateClientLightbox() {
+      const photo = currentPhotos[currentPhotoIdx];
+      if (!photo) return;
+      cImg.src = photo.url;
+      cCaption.innerText = photo.title || `Photo ${currentPhotoIdx + 1}`;
+      cDownloadBtn.onclick = () => {
+        window.location.href = `${API_BASE_URL}/api/client-gallery/${activeSlug}/download/${photo._id}`;
+      };
+    }
+
+    document.getElementById('c-lightbox-close').addEventListener('click', closeClientLightbox);
+    document.getElementById('c-lightbox-next').addEventListener('click', () => {
+      currentPhotoIdx = (currentPhotoIdx + 1) % currentPhotos.length;
+      updateClientLightbox();
+    });
+    document.getElementById('c-lightbox-prev').addEventListener('click', () => {
+      currentPhotoIdx = (currentPhotoIdx - 1 + currentPhotos.length) % currentPhotos.length;
+      updateClientLightbox();
+    });
+
+    cLightbox.addEventListener('click', (e) => {
+      if (e.target === cLightbox) closeClientLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (pwdModal.classList.contains('active')) closePasswordModal();
+        if (cLightbox.classList.contains('active')) closeClientLightbox();
+      }
+      if (!cLightbox.classList.contains('active')) return;
+      if (e.key === 'ArrowRight') {
+        currentPhotoIdx = (currentPhotoIdx + 1) % currentPhotos.length;
+        updateClientLightbox();
+      }
+      if (e.key === 'ArrowLeft') {
+        currentPhotoIdx = (currentPhotoIdx - 1 + currentPhotos.length) % currentPhotos.length;
+        updateClientLightbox();
+      }
+    });
+
+    // Load albums on start
+    loadPublicAlbums();
+  </script>
+</body>
+</html>

@@ -66,6 +66,7 @@ const aboutRoutes = require('./routes/about');
 const reviewRoutes = require('./routes/reviews');
 const logoRoutes = require('./routes/logo');
 const heroImageRoutes = require('./routes/heroImage');
+const clientGalleryRoutes = require('./routes/clientGallery');
 
 app.use('/api/services', serviceRoutes);
 app.use('/api/portfolio', portfolioRoutes);
@@ -74,6 +75,7 @@ app.use('/api/about', aboutRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/logo', logoRoutes);
 app.use('/api/hero-image', heroImageRoutes);
+app.use('/api/client-gallery', clientGalleryRoutes);
 
 // Image Upload API Route
 app.post('/api/upload', (req, res) => {
@@ -108,16 +110,18 @@ app.post('/api/cleanup', async (req, res) => {
     const Logo = require('./models/Logo');
     const Service = require('./models/Service');
     const Portfolio = require('./models/Portfolio');
+    const ClientGallery = require('./models/ClientGallery');
 
     const usedFiles = new Set();
 
     // Gather all referenced URLs from DB
-    const [about, hero, logo, services, portfolios] = await Promise.all([
+    const [about, hero, logo, services, portfolios, clientGalleries] = await Promise.all([
       About.findOne(),
       HeroImage.findOne(),
       Logo.findOne(),
       Service.find(),
-      Portfolio.find()
+      Portfolio.find(),
+      ClientGallery.find()
     ]);
 
     if (about?.imageUrl) usedFiles.add(about.imageUrl);
@@ -125,6 +129,12 @@ app.post('/api/cleanup', async (req, res) => {
     if (logo?.type === 'image') usedFiles.add(logo.value);
     services.forEach(s => s.image && usedFiles.add(s.image));
     portfolios.forEach(p => p.image && usedFiles.add(p.image));
+    clientGalleries.forEach(cg => {
+      if (cg.coverImage) usedFiles.add(cg.coverImage);
+      if (Array.isArray(cg.photos)) {
+        cg.photos.forEach(p => p.url && usedFiles.add(p.url));
+      }
+    });
 
     const { blobs } = await list();
     let deletedCount = 0;

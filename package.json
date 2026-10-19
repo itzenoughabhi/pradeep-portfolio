@@ -7,12 +7,14 @@
   "type": "commonjs",
   "main": "admin/server.js",
   "scripts": {
-    "start": "cd admin && node server.js",
-    "dev": "cd admin && node server.js",
+    "start": "node admin/server.js",
+    "dev": "node admin/server.js",
     "install": "cd admin && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
+    "archiver": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -21,8 +23,7 @@
     "mongoose": "^9.6.2",
     "multer": "^2.1.1"
   },
-  "devDependencies": {},
   "engines": {
-    "node": "18.x || 20.x"
+    "node": ">=18.0.0"
   }
 }
