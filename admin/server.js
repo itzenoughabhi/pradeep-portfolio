@@ -13,27 +13,46 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serverless Resource Management
-let isDbConnected = false;
+// Quick serverless ping (does not block on DB)
+app.get(['/api/ping', '/ping'], (req, res) => {
+  res.json({
+    status: 'ok',
+    server: 'active',
+    time: new Date().toISOString(),
+    dbConnected: mongoose.connection.readyState === 1
+  });
+});
 
-/**
- * Async function to check if the database connection is established.
- * This acts as our "server started" check for serverless environments.
- * If already connected, it prevents unnecessary re-initialization.
- */
+// Serverless Resource Management with Global Connection Caching
 const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://abhishek1432h_db_user:Abhishek.9055@cluster0.fmnyr6j.mongodb.net/test?appName=Cluster0';
 
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
 async function ensureServerStarted() {
-  if (isDbConnected && mongoose.connection.readyState === 1) {
-    return;
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 5000,
+    };
+    cached.promise = mongoose.connect(MONGO_URI, opts).then((m) => {
+      console.log('MongoDB connected and server resources ready');
+      return m;
+    });
   }
 
   try {
-    const db = await mongoose.connect(MONGO_URI);
-    isDbConnected = db.connections[0].readyState === 1;
-    console.log('MongoDB connected and server resources ready');
+    cached.conn = await cached.promise;
+    return cached.conn;
   } catch (err) {
-    console.error('MongoDB connection error:', err);
+    cached.promise = null;
+    console.error('MongoDB connection error:', err.message);
     throw err;
   }
 }
@@ -44,12 +63,16 @@ app.use(async (req, res, next) => {
     await ensureServerStarted();
     next();
   } catch (err) {
-    console.error('ensureServerStarted error:', err);
-    res.status(500).json({ message: "Server initialization failed", error: err.message });
+    console.error('ensureServerStarted error:', err.message);
+    res.status(500).json({
+      message: "Database connection failed",
+      error: err.message,
+      tip: "Please verify that MongoDB Atlas allows access from anywhere (IP 0.0.0.0/0) in Network Access."
+    });
   }
 });
 
-// Health check endpoint
+// Health check endpoint with DB state
 app.get(['/api/health', '/health', '/api'], (req, res) => {
   res.json({
     status: 'ok',
