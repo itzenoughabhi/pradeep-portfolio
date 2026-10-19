@@ -1,17 +1,12 @@
 {
   "version": 2,
-  "functions": {
-    "api/*.js": {
-      "includeFiles": "admin/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api"
+      "destination": "/admin/server.js"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/(.*)",
       "destination": "/frontend/$1"
     }
   ]
