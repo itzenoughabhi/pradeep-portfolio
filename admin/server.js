@@ -32,14 +32,14 @@ if (!cached) {
 }
 
 async function ensureServerStarted() {
-  if (cached.conn && mongoose.connection.readyState === 1) {
-    return cached.conn;
+  if (mongoose.connection.readyState === 1) {
+    return mongoose;
   }
 
-  if (!cached.promise) {
+  if (!cached.promise || mongoose.connection.readyState === 0) {
     const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 8000,
     };
     cached.promise = mongoose.connect(MONGO_URI, opts).then((m) => {
       console.log('MongoDB connected and server resources ready');
@@ -52,6 +52,7 @@ async function ensureServerStarted() {
     return cached.conn;
   } catch (err) {
     cached.promise = null;
+    cached.conn = null;
     console.error('MongoDB connection error:', err.message);
     throw err;
   }
