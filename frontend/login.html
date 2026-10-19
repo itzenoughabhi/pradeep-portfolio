@@ -118,10 +118,10 @@
     </div>
 
     <script>
-        // Dynamic API Base URL - points to localhost for local testing and live backend for production
-        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+        // Dynamic API Base URL - works for local, preview, and production domains
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') 
             ? 'http://localhost:5000' 
-            : 'https://pradeep-portfolio-rose.vercel.app';
+            : '';
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
