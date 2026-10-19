@@ -90,8 +90,10 @@ const upload = multer({
   }
 });
 
-// Serve static files from the frontend directory with support for clean URLs (e.g. /dashboard works for dashboard.html)
-app.use(express.static(path.join(__dirname, '../frontend'), { extensions: ['html', 'htm'] }));
+// Serve static files from the frontend directory locally
+if (!process.env.VERCEL) {
+  app.use(express.static(path.join(__dirname, '../frontend'), { extensions: ['html', 'htm'] }));
+}
 
 // Routes
 const serviceRoutes = require('./routes/services');
