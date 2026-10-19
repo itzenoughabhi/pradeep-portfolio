@@ -1,3 +1,29 @@
-const app = require('../admin/server');
+let app;
+let initError = null;
 
-module.exports = app;
+try {
+  app = require('../admin/server');
+} catch (err) {
+  initError = err;
+  console.error('Initialization error loading server.js:', err);
+}
+
+module.exports = (req, res) => {
+  if (initError) {
+    return res.status(500).json({
+      error: 'API initialization failed',
+      message: initError.message,
+      stack: initError.stack
+    });
+  }
+
+  try {
+    return app(req, res);
+  } catch (err) {
+    return res.status(500).json({
+      error: 'Handler invocation error',
+      message: err.message,
+      stack: err.stack
+    });
+  }
+};
