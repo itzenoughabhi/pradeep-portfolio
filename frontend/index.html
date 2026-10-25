@@ -51,14 +51,23 @@
              alt="Luxury Indian Wedding Ceremony by Jangra.visual" 
              loading="eager">
       </div>
+      <!-- Mobile Floating Story Badge & Carousel Indicators -->
+      <div class="hero-mobile-story-pill">
+        <span class="story-dot"></span>
+        <span id="hero-story-caption">Royal Wedding Ceremony</span>
+      </div>
+      <div class="hero-mobile-indicators">
+        <button type="button" class="hero-mob-dot active" onclick="switchHeroPreview(0)" aria-label="Photo 1"></button>
+        <button type="button" class="hero-mob-dot" onclick="switchHeroPreview(1)" aria-label="Photo 2"></button>
+        <button type="button" class="hero-mob-dot" onclick="switchHeroPreview(2)" aria-label="Photo 3"></button>
+      </div>
     </div>
 
     <!-- Hero Content Container -->
     <div class="container hero-content-container">
       <div class="hero-left">
         <div class="hero-eyebrow" id="hero-eyebrow">
-          <span>PHOTOGRAPHY &amp; FILMS</span>
-          <span class="eyebrow-line"></span>
+          <span class="hero-eyebrow-badge">✦ CINEMATIC PHOTOGRAPHY &amp; FILMS</span>
         </div>
         
         <h1 class="hero-title" id="hero-title">
@@ -67,35 +76,51 @@
         </h1>
         
         <p class="hero-description" id="hero-desc">
-          Capturing real emotions, beautiful people and unforgettable moments through my lens.
+          Capturing real emotions, authentic love, and unforgettable celebrations with intentional natural light and cinematic storytelling.
         </p>
 
-        <div class="hero-coverage-card" id="hero-actions">
+        <!-- Primary Action CTAs -->
+        <div class="hero-cta-group" id="hero-actions">
+          <a href="#contact" class="btn-pill-primary">
+            Book A Shoot <span class="btn-arrow">→</span>
+          </a>
+          <a href="https://wa.me/918412816829?text=Hi%20Pradeep,%20I%20would%20like%20to%20inquire%20about%20booking%20a%20photography%20session." target="_blank" rel="noopener noreferrer" class="btn-pill-outline">
+            WhatsApp Inquire
+          </a>
+          <a href="https://www.instagram.com/jangra.visuals/" target="_blank" rel="noopener noreferrer" class="hero-insta-chip" title="Follow on Instagram">
+            <svg class="insta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            <span>@jangra.visuals</span>
+          </a>
+        </div>
+
+        <!-- Curated Occasions & Capabilities Strip -->
+        <div class="hero-coverage-card">
           <div class="coverage-header">
+            <span class="coverage-eyebrow-tag">COMMISSIONS &amp; OCCASIONS</span>
             <h3 class="coverage-title">Every Occasion. Every Emotion.</h3>
           </div>
 
           <div class="coverage-list">
-            <span class="coverage-tag">
+            <button type="button" class="coverage-tag" onclick="filterPortfolio('wedding')">
               <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg>
               Wedding &amp; Engagement
-            </span>
-            <span class="coverage-tag">
-              <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-              Birthday Celebrations
-            </span>
-            <span class="coverage-tag">
+            </button>
+            <button type="button" class="coverage-tag" onclick="filterPortfolio('portrait')">
               <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
               Portrait &amp; Couple Shoots
-            </span>
-            <span class="coverage-tag">
-              <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
-              Baby &amp; Family Shoots
-            </span>
-            <span class="coverage-tag">
+            </button>
+            <button type="button" class="coverage-tag" onclick="filterPortfolio('event')">
               <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               Events &amp; Special Occasions
-            </span>
+            </button>
+            <button type="button" class="coverage-tag" onclick="filterPortfolio('birthday')">
+              <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              Birthday Celebrations
+            </button>
+            <button type="button" class="coverage-tag">
+              <svg class="tag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              Baby &amp; Family Shoots
+            </button>
           </div>
 
           <div class="coverage-cinematic">
@@ -104,19 +129,9 @@
             <span class="cinematic-dot">·</span>
             <span class="cinematic-item">Gimbal-Stabilized Reels</span>
             <span class="cinematic-dot">·</span>
-            <span class="cinematic-item">Cinematic Wedding Films</span>
+            <span class="cinematic-item">Wedding Films</span>
             <span class="cinematic-dot">·</span>
-            <span class="cinematic-item">LED Lighting Setup</span>
-          </div>
-
-          <div class="coverage-footer">
-            <a href="#contact" class="coverage-plan-link">
-              Let's Plan Your Shoot <span class="plan-arrow">→</span>
-            </a>
-            <a href="https://www.instagram.com/jangra.visuals/" target="_blank" rel="noopener noreferrer" class="coverage-insta-link">
-              <svg class="insta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              <span>Bookings &amp; Enquiries · <strong>@jangra.visuals</strong></span>
-            </a>
+            <span class="cinematic-item">Master LED Lighting</span>
           </div>
         </div>
       </div>
@@ -509,14 +524,34 @@
 
     const mobileToggle = document.getElementById('mobile-toggle');
     const navLinks = document.getElementById('nav-links');
-    mobileToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('mobile-open');
+
+    function closeMobileNav() {
+      navLinks.classList.remove('mobile-open');
+      mobileToggle.classList.remove('active');
+      document.body.classList.remove('menu-open');
+    }
+
+    mobileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = navLinks.classList.toggle('mobile-open');
+      mobileToggle.classList.toggle('active', isOpen);
+      document.body.classList.toggle('menu-open', isOpen);
     });
 
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('mobile-open');
-      });
+      link.addEventListener('click', closeMobileNav);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('mobile-open') && !navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
+        closeMobileNav();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && navLinks.classList.contains('mobile-open')) {
+        closeMobileNav();
+      }
     });
 
     // --- REAL ANIMATIONS VIA GSAP (Respecting prefers-reduced-motion) ---
@@ -600,27 +635,33 @@
             ease: 'power2.inOut',
             onComplete: () => {
               img.src = heroPreviews[idx];
-              if (isPortrait) {
-                // Zoom out so the entire bride portrait and jewelry are fully visible
-                img.style.objectPosition = 'center 15%';
-                gsap.to(img, { 
-                  opacity: 1, 
-                  scale: 0.85, 
-                  duration: 0.65,
-                  ease: 'power2.out'
-                });
+              if (window.innerWidth <= 768) {
+                img.style.objectPosition = 'center 20%';
               } else {
-                img.style.objectPosition = '65% 12%';
-                gsap.to(img, { 
-                  opacity: 1, 
-                  scale: 1, 
-                  duration: 0.65,
-                  ease: 'power2.out'
-                });
+                img.style.objectPosition = isPortrait ? 'center 15%' : '65% 12%';
               }
+              gsap.to(img, { 
+                opacity: 1, 
+                scale: 1, 
+                duration: 0.65,
+                ease: 'power2.out'
+              });
             }
           });
         }
+
+        // Update story caption and mobile indicators
+        const storyCaptions = [
+          "Royal Wedding Ceremony",
+          "Bridal Elegance • Fine Art Portrait",
+          "Sacred Mandap • Wedding Story"
+        ];
+        const captionEl = document.getElementById('hero-story-caption');
+        if (captionEl) captionEl.innerText = storyCaptions[idx] || "Wedding Story";
+
+        document.querySelectorAll('.hero-mob-dot').forEach((dot, i) => {
+          dot.classList.toggle('active', i === idx);
+        });
 
         // Update thumbnails active state
         document.querySelectorAll('.hero-thumb-item').forEach((item, i) => {

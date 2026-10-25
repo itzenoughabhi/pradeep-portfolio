@@ -732,30 +732,262 @@
         }
         .photo-manage-del:hover { background: #dc2626; }
 
+        /* Mobile Top Bar (Hidden on desktop) */
+        .mobile-admin-topbar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--sidebar-bg);
+            color: #ffffff;
+            z-index: 1000;
+            padding: 0 16px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .mobile-sidebar-toggle {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .mobile-sidebar-toggle:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 17, 32, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1040;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .sidebar-close-btn {
+            display: none;
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sidebar-close-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
         /* Responsive Breakpoints */
         @media (max-width: 960px) {
-            body { padding-left: 0; }
-            .sidebar {
-                position: static;
-                width: 100%;
-                height: auto;
-                padding: 15px 20px;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
+            body { 
+                padding-left: 0; 
+                padding-top: 60px;
             }
-            .sidebar-brand { padding: 0; border: none; margin: 0; }
-            .nav-menu { display: none; }
-            .sidebar-footer { padding: 0; border: none; flex-direction: row; }
-            .main-content { padding: 20px; }
-            .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+
+            .mobile-admin-topbar { 
+                display: flex; 
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 290px;
+                max-width: 85vw;
+                height: 100vh;
+                height: 100dvh;
+                z-index: 1050;
+                transform: translateX(-100%);
+                transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow: 4px 0 25px rgba(0,0,0,0.3);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close-btn {
+                display: flex;
+            }
+
+            .sidebar-brand {
+                padding: 10px 20px 20px 20px;
+            }
+
+            .nav-menu {
+                display: block;
+            }
+
+            .nav-menu li a {
+                padding: 13px 16px;
+                font-size: 14px;
+            }
+
+            .main-content { 
+                padding: 24px 20px 60px 20px; 
+            }
+
+            .form-row-2, .form-row-3 { 
+                grid-template-columns: 1fr; 
+                gap: 14px;
+            }
+
+            .client-galleries-grid {
+                grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                margin-bottom: 24px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .stat-card {
+                padding: 14px;
+                gap: 12px;
+            }
+
+            .stat-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+
+            .stat-info .stat-num {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 20px 16px;
+                margin-bottom: 24px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .modal-box {
+                padding: 20px 16px;
+                max-height: 92vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 56px;
+            }
+
+            .mobile-admin-topbar {
+                height: 56px;
+                padding: 0 12px;
+            }
+
+            .main-content {
+                padding: 16px 12px 50px 12px;
+            }
+
+            .dashboard-title-area h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                padding: 16px 12px;
+                border-radius: 10px;
+            }
+
+            .client-galleries-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-card-actions {
+                flex-direction: column;
+            }
+
+            .gallery-card-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            input[type="text"], 
+            input[type="password"], 
+            input[type="number"], 
+            input[type="date"],
+            textarea, 
+            select {
+                font-size: 16px; /* Prevents auto-zoom in iOS Safari */
+                padding: 11px 14px;
+            }
+
+            .source-choice-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- MOBILE TOPBAR FOR ADMIN -->
+    <header class="mobile-admin-topbar">
+        <button class="mobile-sidebar-toggle" id="sidebar-toggle-btn" aria-label="Open sidebar menu">☰</button>
+        <div style="font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: #fff;">
+            Jangra<span>.</span>visuals
+        </div>
+        <a href="index.html" target="_blank" class="btn btn-outline btn-sm" style="color: #fff; border-color: rgba(255,255,255,0.2); padding: 5px 10px; font-size: 11.5px;">Site ↗</a>
+    </header>
+
+    <!-- BACKDROP OVERLAY FOR MOBILE SIDEBAR -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="admin-sidebar">
+        <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">✕</button>
         <div class="sidebar-brand">
             <h2 class="brand-logo-text">Jangra<span>.</span>visuals</h2>
             <span class="brand-tag">Photography & Films Admin</span>
@@ -1327,6 +1559,37 @@
             localStorage.removeItem('adminToken');
             window.location.href = 'login.html';
         }
+
+        // Mobile Sidebar Drawer Management
+        const adminSidebar = document.getElementById('admin-sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+
+        function openAdminSidebar() {
+            if (adminSidebar) adminSidebar.classList.add('mobile-open');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAdminSidebar() {
+            if (adminSidebar) adminSidebar.classList.remove('mobile-open');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', openAdminSidebar);
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeAdminSidebar);
+        if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeAdminSidebar);
+
+        // Auto close sidebar when a navigation link is clicked on mobile
+        document.querySelectorAll('.sidebar .nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 960) {
+                    closeAdminSidebar();
+                }
+            });
+        });
 
         // Tab Switching Helper
         function switchTab(btn, targetId) {
