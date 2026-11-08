@@ -3423,9 +3423,9 @@ Cancellation policy applies as per discussion.</textarea>
                 const amt = Number(it.amount) || 0;
                 itemsRows += `
                     <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <td style="padding: 14px 18px; font-weight: 700; font-size: 14px; color: #111827; vertical-align: top; width: 28%;">${escapeHtml(it.service)}</td>
-                        <td style="padding: 14px 18px; font-size: 13px; color: #4b5563; line-height: 1.5; vertical-align: top; width: 50%;">${escapeHtml(it.details)}</td>
-                        <td style="padding: 14px 18px; font-weight: 600; font-size: 14px; color: #111827; text-align: right; vertical-align: top; width: 22%;">₹ ${amt.toLocaleString('en-IN')}</td>
+                        <td style="padding: 12px 14px; font-weight: 700; font-size: 13.5px; color: #111827; vertical-align: top; width: 28%;">${escapeHtml(it.service)}</td>
+                        <td style="padding: 12px 14px; font-size: 12.5px; color: #4b5563; line-height: 1.5; vertical-align: top; width: 50%;">${escapeHtml(it.details)}</td>
+                        <td style="padding: 12px 14px; font-weight: 600; font-size: 13.5px; color: #111827; text-align: right; vertical-align: top; width: 22%;">₹ ${amt.toLocaleString('en-IN')}</td>
                     </tr>
                 `;
             });
@@ -3433,8 +3433,8 @@ Cancellation policy applies as per discussion.</textarea>
             let inclusionsList = '';
             (q.inclusions || []).forEach(inc => {
                 inclusionsList += `
-                    <li style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 13px; color: #374151; line-height: 1.5;">
-                        <span style="color: #111827; font-weight: 700;">✓</span>
+                    <li style="margin-bottom: 5px; font-size: 12.5px; color: #374151; line-height: 1.5; list-style: none;">
+                        <span style="color: #111827; font-weight: 700; margin-right: 6px;">✓</span>
                         <span>${escapeHtml(inc.replace(/^[✓•\-\s]+/, ''))}</span>
                     </li>
                 `;
@@ -3443,65 +3443,73 @@ Cancellation policy applies as per discussion.</textarea>
             let termsList = '';
             (q.terms || []).forEach(t => {
                 termsList += `
-                    <li style="margin-bottom: 5px; font-size: 12.5px; color: #4b5563; line-height: 1.6;">
+                    <li style="margin-bottom: 4px; font-size: 12px; color: #4b5563; line-height: 1.6;">
                         ${escapeHtml(t.replace(/^[✓•\-\s]+/, ''))}
                     </li>
                 `;
             });
 
             return `
-                <div class="quotation-pdf-sheet" style="box-sizing: border-box; width: 100%; max-width: 794px; min-height: 1080px; margin: 0 auto; background: #ffffff; padding: 48px 44px; color: #111827; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="quotation-pdf-sheet" style="box-sizing: border-box; width: 794px; min-height: 1115px; margin: 0 auto; background: #ffffff; padding: 44px 40px; color: #111827; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; display: flex; flex-direction: column; justify-content: space-between;">
                     
                     <div>
                         <!-- Top Header -->
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; padding-bottom: 8px;">
-                            <!-- Logo Brand -->
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 44px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: #111827;">Jv</div>
-                                <div style="width: 1px; height: 38px; background: #111827;"></div>
-                                <div style="letter-spacing: 0.22em; text-transform: uppercase;">
-                                    <div style="font-size: 14.5px; font-weight: 800; color: #000; letter-spacing: 0.22em;">JANGRA VISUALS</div>
-                                    <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.38em; color: #4b5563; margin-top: 4px;">PHOTOGRAPHY</div>
-                                </div>
-                            </div>
-                            <!-- Quotation Header Right -->
-                            <div style="text-align: right;">
-                                <div style="font-size: 24px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #000;">QUOTATION</div>
-                                <div style="font-size: 13px; color: #4b5563; font-weight: 500; margin-top: 5px;">Ref. ${ref}</div>
-                            </div>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                            <tr>
+                                <td style="vertical-align: middle;">
+                                    <table style="border-collapse: collapse;">
+                                        <tr>
+                                            <td style="font-family: 'Playfair Display', Georgia, serif; font-size: 42px; font-weight: 700; line-height: 1; color: #111827; padding-right: 14px;">Jv</td>
+                                            <td style="width: 1px; background: #111827; height: 38px; padding: 0;"></td>
+                                            <td style="padding-left: 14px; text-transform: uppercase;">
+                                                <div style="font-size: 14px; font-weight: 800; color: #000; letter-spacing: 0.22em;">JANGRA VISUALS</div>
+                                                <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.35em; color: #4b5563; margin-top: 3px;">PHOTOGRAPHY</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="text-align: right; vertical-align: middle;">
+                                    <div style="font-size: 24px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #000;">QUOTATION</div>
+                                    <div style="font-size: 13px; color: #4b5563; font-weight: 600; margin-top: 4px;">Ref. ${ref}</div>
+                                </td>
+                            </tr>
+                        </table>
 
                         <!-- Info Grid: Client info vs Date/Valid/Project -->
-                        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; margin-bottom: 32px;">
-                            <div>
-                                <div style="font-size: 12.5px; color: #6b7280; margin-bottom: 4px;">To</div>
-                                <div style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 3px;">${cName}</div>
-                                ${cEmail ? `<div style="font-size: 13px; color: #374151; margin-bottom: 2px;">${cEmail}</div>` : ''}
-                                ${cPhone ? `<div style="font-size: 13px; color: #374151;">${cPhone}</div>` : ''}
-                            </div>
-                            <div style="border-left: 1px solid #e5e7eb; padding-left: 28px; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
-                                <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                                    <span style="color: #6b7280;">Date</span>
-                                    <span style="font-weight: 600; color: #111827;">${qDate}</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                                    <span style="color: #6b7280;">Valid Till</span>
-                                    <span style="font-weight: 600; color: #111827;">${qValidTill}</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                                    <span style="color: #6b7280;">Project</span>
-                                    <span style="font-weight: 600; color: #111827;">${qProj}</span>
-                                </div>
-                            </div>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 28px;">
+                            <tr>
+                                <td style="width: 55%; vertical-align: top; padding-right: 20px;">
+                                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">To</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 3px;">${cName}</div>
+                                    ${cEmail ? `<div style="font-size: 13px; color: #374151; margin-bottom: 2px;">${cEmail}</div>` : ''}
+                                    ${cPhone ? `<div style="font-size: 13px; color: #374151;">${cPhone}</div>` : ''}
+                                </td>
+                                <td style="width: 45%; vertical-align: top; border-left: 1px solid #e5e7eb; padding-left: 24px;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                        <tr>
+                                            <td style="color: #6b7280; padding: 3px 0;">Date</td>
+                                            <td style="font-weight: 600; color: #111827; text-align: right; padding: 3px 0;">${qDate}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #6b7280; padding: 3px 0;">Valid Till</td>
+                                            <td style="font-weight: 600; color: #111827; text-align: right; padding: 3px 0;">${qValidTill}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #6b7280; padding: 3px 0;">Project</td>
+                                            <td style="font-weight: 600; color: #111827; text-align: right; padding: 3px 0;">${qProj}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
 
                         <!-- Table: Service, Details, Amount -->
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 32px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 28px;">
                             <thead>
                                 <tr style="background: #f4f5f7;">
-                                    <th style="padding: 10px 18px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563; border-top-left-radius: 4px; border-bottom-left-radius: 4px;">SERVICE</th>
-                                    <th style="padding: 10px 18px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563;">DETAILS</th>
-                                    <th style="padding: 10px 18px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563; border-top-right-radius: 4px; border-bottom-right-radius: 4px;">AMOUNT</th>
+                                    <th style="padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563;">SERVICE</th>
+                                    <th style="padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563;">DETAILS</th>
+                                    <th style="padding: 10px 14px; text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563;">AMOUNT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -3510,55 +3518,53 @@ Cancellation policy applies as per discussion.</textarea>
                         </table>
 
                         <!-- Lower Section: Inclusions & Financials -->
-                        <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; margin-bottom: 32px;">
-                            <div>
-                                <div style="font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 12px;">Inclusions</div>
-                                <ul style="list-style: none; padding: 0; margin: 0;">
-                                    ${inclusionsList}
-                                </ul>
-                            </div>
-                            <div style="border-left: 1px solid #e5e7eb; padding-left: 28px; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px;">
-                                <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
-                                    <span style="color: #4b5563;">Subtotal</span>
-                                    <span style="font-weight: 600; color: #111827;">₹ ${subtotal.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
-                                    <span style="color: #4b5563;">Advance (${advPercent}%)</span>
-                                    <span style="font-weight: 600; color: #111827;">– ₹ ${advAmount.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div style="background: #111827; color: #ffffff; padding: 13px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                                    <span style="font-size: 13.5px; font-weight: 600; letter-spacing: 0.02em;">Balance Payable</span>
-                                    <span style="font-size: 18px; font-weight: 800; letter-spacing: 0.02em;">₹ ${balance.toLocaleString('en-IN')}</span>
-                                </div>
-                            </div>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 28px;">
+                            <tr>
+                                <td style="width: 55%; vertical-align: top; padding-right: 20px;">
+                                    <div style="font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 10px;">Inclusions</div>
+                                    <ul style="padding: 0; margin: 0;">
+                                        ${inclusionsList}
+                                    </ul>
+                                </td>
+                                <td style="width: 45%; vertical-align: bottom; border-left: 1px solid #e5e7eb; padding-left: 24px;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 12px;">
+                                        <tr>
+                                            <td style="color: #4b5563; padding: 4px 0;">Subtotal</td>
+                                            <td style="font-weight: 600; color: #111827; text-align: right; padding: 4px 0;">₹ ${subtotal.toLocaleString('en-IN')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #4b5563; padding: 4px 0;">Advance (${advPercent}%)</td>
+                                            <td style="font-weight: 600; color: #111827; text-align: right; padding: 4px 0;">– ₹ ${advAmount.toLocaleString('en-IN')}</td>
+                                        </tr>
+                                    </table>
+                                    <div style="background: #111827; color: #ffffff; padding: 12px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 13.5px; font-weight: 600; letter-spacing: 0.02em;">Balance Payable</span>
+                                        <span style="font-size: 18px; font-weight: 800; letter-spacing: 0.02em;">₹ ${balance.toLocaleString('en-IN')}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
 
                         <!-- Terms & Conditions -->
-                        <div style="margin-bottom: 36px;">
-                            <div style="font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 10px;">Terms & Conditions</div>
-                            <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; color: #4b5563; line-height: 1.7;">
+                        <div style="margin-bottom: 26px;">
+                            <div style="font-size: 14.5px; font-weight: 700; color: #111827; margin-bottom: 8px;">Terms & Conditions</div>
+                            <ul style="margin: 0; padding-left: 18px; font-size: 12px; color: #4b5563; line-height: 1.65;">
                                 ${termsList}
                             </ul>
                         </div>
                     </div>
 
                     <!-- Footer: Contact & Signature -->
-                    <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                        <div style="display: flex; align-items: center; gap: 16px; font-size: 12.5px; color: #111827; font-weight: 500;">
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <svg style="width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                                <span>+91 84128 16829</span>
-                            </div>
-                            <div style="color: #d1d5db;">|</div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <svg style="width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                                <span>@jangra.visuals</span>
-                            </div>
-                        </div>
-                        <div>
-                            <span style="font-family: 'Dancing Script', 'Brush Script MT', cursive; font-size: 27px; color: #111827; letter-spacing: 0.03em;">Jangra Visuals</span>
-                        </div>
-                    </div>
+                    <table style="width: 100%; border-collapse: collapse; border-top: 1px solid #e5e7eb; padding-top: 18px;">
+                        <tr>
+                            <td style="vertical-align: middle; padding-top: 16px;">
+                                <span style="font-size: 12.5px; color: #111827; font-weight: 600;">📞 +91 84128 16829 &nbsp;|&nbsp; 📷 @jangra.visuals</span>
+                            </td>
+                            <td style="vertical-align: middle; text-align: right; padding-top: 16px;">
+                                <span style="font-family: 'Dancing Script', 'Brush Script MT', cursive; font-size: 27px; color: #111827; letter-spacing: 0.03em;">Jangra Visuals</span>
+                            </td>
+                        </tr>
+                    </table>
 
                 </div>
             `;
@@ -3572,7 +3578,7 @@ Cancellation policy applies as per discussion.</textarea>
                 btn.innerHTML = '<span class="spinner-inline"></span> Generating PDF...';
             }
 
-            const toast = showToast('Rendering high-resolution Quotation PDF...', 'loading', 0);
+            const toast = showToast('Rendering Quotation PDF...', 'loading', 0);
 
             try {
                 const htmlContent = buildQuotationDocumentHtml(data);
@@ -3581,25 +3587,53 @@ Cancellation policy applies as per discussion.</textarea>
                 const filename = `${safeRef}_${safeClient}.pdf`;
 
                 if (typeof html2pdf !== 'undefined') {
+                    // Remove any prior stale export container
+                    const stale = document.getElementById('temp-pdf-export-container');
+                    if (stale) stale.remove();
+
+                    // Create export container positioned at (0, 0) in viewport
                     const tempContainer = document.createElement('div');
+                    tempContainer.id = 'temp-pdf-export-container';
                     tempContainer.style.position = 'fixed';
-                    tempContainer.style.left = '-9999px';
                     tempContainer.style.top = '0';
+                    tempContainer.style.left = '0';
                     tempContainer.style.width = '794px';
+                    tempContainer.style.zIndex = '999999';
                     tempContainer.style.background = '#ffffff';
+                    tempContainer.style.margin = '0';
+                    tempContainer.style.padding = '0';
+                    tempContainer.style.boxShadow = '0 0 50px rgba(0,0,0,0.3)';
                     tempContainer.innerHTML = htmlContent;
                     document.body.appendChild(tempContainer);
 
+                    // Wait 250ms for fonts & layout
+                    await new Promise(r => setTimeout(r, 250));
+
+                    const sheetEl = tempContainer.querySelector('.quotation-pdf-sheet') || tempContainer;
+
                     const opt = {
-                        margin:       [8, 8, 8, 8],
+                        margin:       [0, 0, 0, 0],
                         filename:     filename,
                         image:        { type: 'jpeg', quality: 0.98 },
-                        html2canvas:  { scale: 2, useCORS: true, letterRendering: true, logging: false },
+                        html2canvas:  { 
+                            scale: 2, 
+                            useCORS: true, 
+                            letterRendering: true, 
+                            logging: false,
+                            scrollX: 0,
+                            scrollY: 0,
+                            x: 0,
+                            y: 0,
+                            windowWidth: 800
+                        },
                         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                     };
 
-                    await html2pdf().set(opt).from(tempContainer).save();
-                    if (tempContainer.parentElement) document.body.removeChild(tempContainer);
+                    await html2pdf().set(opt).from(sheetEl).save();
+                    
+                    if (tempContainer.parentElement) {
+                        tempContainer.parentElement.removeChild(tempContainer);
+                    }
 
                     toast.dismiss();
                     showToast(`Quotation PDF (${safeRef}) downloaded successfully!`, 'success');
@@ -3614,6 +3648,9 @@ Cancellation policy applies as per discussion.</textarea>
                 showToast('Direct download error, opening print window...', 'warning');
                 printQuotation(data);
             } finally {
+                const stale = document.getElementById('temp-pdf-export-container');
+                if (stale && stale.parentElement) stale.parentElement.removeChild(stale);
+
                 if (btn) {
                     btn.disabled = false;
                     btn.innerHTML = origHtml;
