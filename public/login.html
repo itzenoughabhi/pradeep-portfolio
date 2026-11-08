@@ -122,7 +122,10 @@
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <div style="position: relative;">
+                    <input type="password" id="password" required style="padding-right: 45px;">
+                    <button type="button" id="togglePasswordBtn" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; padding: 4px 8px; width: auto; font-size: 16px; cursor: pointer; color: var(--text-muted);" title="Toggle password visibility">👁️</button>
+                </div>
             </div>
             <button type="submit">Login</button>
             <div id="errorMessage" class="error"></div>
@@ -138,10 +141,19 @@
             ? 'http://localhost:5000' 
             : '';
 
+        document.getElementById('togglePasswordBtn').addEventListener('click', () => {
+            const pwdInput = document.getElementById('password');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+            } else {
+                pwdInput.type = 'password';
+            }
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
             
             try {
                 const response = await fetch(`${API_BASE_URL}/api/auth/login`, {

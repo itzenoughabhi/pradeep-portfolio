@@ -6,10 +6,12 @@ const Admin = require('../models/Admin');
 
 // Admin Login
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const username = (req.body.username || '').trim();
+  const password = (req.body.password || '').trim();
   try {
-    // Check for existing admin
-    const admin = await Admin.findOne({ username });
+    // Check for existing admin (case-insensitive and trimmed)
+    const escaped = username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const admin = await Admin.findOne({ username: new RegExp(`^${escaped}$`, 'i') });
     if (!admin) return res.status(400).json({ message: 'Invalid credentials' });
 
     // Validate password
