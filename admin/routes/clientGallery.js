@@ -258,6 +258,7 @@ router.get('/:slug', async (req, res) => {
       title: gallery.title,
       slug: gallery.slug,
       coverImage: gallery.coverImage,
+      driveUrl: gallery.driveUrl || '',
       photos: gallery.photos,
       allowBulkDownload: gallery.allowBulkDownload,
       expiryDate: gallery.expiryDate,
@@ -396,7 +397,7 @@ router.get('/admin/all', verifyAdmin, async (req, res) => {
 
 // Create new client gallery
 router.post('/admin/create', verifyAdmin, async (req, res) => {
-  const { clientName, title, slug, password, coverImage, expiryDate, allowBulkDownload, photos } = req.body;
+  const { clientName, title, slug, password, coverImage, driveUrl, expiryDate, allowBulkDownload, photos } = req.body;
 
   if (!clientName || !title) {
     return res.status(400).json({ message: 'Client name and album title are required' });
@@ -425,6 +426,7 @@ router.post('/admin/create', verifyAdmin, async (req, res) => {
       slug: cleanSlug,
       password: hashedPassword,
       coverImage: coverImage || (photos && photos.length > 0 ? photos[0].url : ''),
+      driveUrl: driveUrl ? driveUrl.trim() : '',
       expiryDate: expiryDate ? new Date(expiryDate) : null,
       allowBulkDownload: allowBulkDownload !== undefined ? allowBulkDownload : true,
       photos: photos || []

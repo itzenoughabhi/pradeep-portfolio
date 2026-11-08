@@ -72,6 +72,9 @@
               <button class="btn btn-primary" id="btn-download-all">
                 Download Collection (ZIP)
               </button>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline" id="btn-drive-folder" style="display: none; align-items: center; gap: 8px;">
+                ☁️ Open Google Drive ↗
+              </a>
             </div>
           </div>
         </div>
@@ -339,6 +342,17 @@
 
         container.appendChild(card);
       });
+
+      // Google Drive Button
+      const btnDrive = document.getElementById('btn-drive-folder');
+      if (btnDrive) {
+        if (gallery.driveUrl && gallery.driveUrl.trim()) {
+          btnDrive.href = gallery.driveUrl.trim();
+          btnDrive.style.display = 'inline-flex';
+        } else {
+          btnDrive.style.display = 'none';
+        }
+      }
 
       // Bulk download button ("Download All")
       const btnDownloadAll = document.getElementById('btn-download-all');

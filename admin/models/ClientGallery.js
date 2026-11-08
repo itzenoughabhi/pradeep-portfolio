@@ -6,6 +6,7 @@ const clientGallerySchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, default: '' },
   coverImage: { type: String, default: '' },
+  driveUrl: { type: String, default: '', trim: true },
   photos: [
     {
       url: { type: String, required: true },

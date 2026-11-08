@@ -782,7 +782,8 @@
       const items = document.querySelectorAll('#dynamic-portfolio .portfolio-item');
       items.forEach(item => {
         const itemCat = item.getAttribute('data-category') || '';
-        if (category === 'all' || itemCat.toLowerCase().includes(category.toLowerCase())) {
+        const cats = itemCat.toLowerCase().split(/\s+/);
+        if (category === 'all' || cats.includes(category.toLowerCase())) {
           item.style.display = 'block';
         } else {
           item.style.display = 'none';
@@ -940,15 +941,37 @@
             const grid = document.getElementById('dynamic-portfolio');
             if (grid) {
               grid.innerHTML = '';
+
+              // Dynamically append filter buttons for any new custom categories
+              const filterContainer = document.getElementById('portfolio-filters');
+              if (filterContainer) {
+                const knownSlugs = new Set(['all', 'wedding', 'portrait', 'event', 'birthday']);
+                portData.forEach(item => {
+                  if (item.category) {
+                    const slug = item.category.trim().toLowerCase().replace(/\s+/g, '-');
+                    if (slug && !knownSlugs.has(slug)) {
+                      knownSlugs.add(slug);
+                      const btn = document.createElement('button');
+                      btn.className = 'filter-btn';
+                      btn.setAttribute('data-category', slug);
+                      btn.textContent = slug.split(/[\s_-]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                      btn.addEventListener('click', () => filterPortfolio(slug));
+                      filterContainer.appendChild(btn);
+                    }
+                  }
+                });
+              }
+
               portData.forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = 'portfolio-item';
 
                 // Intelligent category assignment based on database category and title keywords
                 const titleLower = (item.title || '').toLowerCase();
-                const itemCat = (item.category || '').toLowerCase().trim();
+                const rawCat = (item.category || '').toLowerCase().trim();
+                const itemCatSlug = rawCat.replace(/\s+/g, '-');
                 let cats = ['all'];
-                if (itemCat) cats.push(itemCat);
+                if (itemCatSlug) cats.push(itemCatSlug);
                 if (titleLower.includes('wedding') || titleLower.includes('shadi') || titleLower.includes('shaadi') || titleLower.includes('dulhan') || titleLower.includes('bride') || titleLower.includes('couple')) cats.push('wedding');
                 if (titleLower.includes('portrait') || titleLower.includes('makeup') || titleLower.includes('artist') || titleLower.includes('model') || titleLower.includes('shoot') || titleLower.includes('outdoor')) cats.push('portrait');
                 if (titleLower.includes('event') || titleLower.includes('sangeet') || titleLower.includes('reception') || titleLower.includes('party')) cats.push('event');
@@ -960,7 +983,10 @@
                 const uniqueCats = Array.from(new Set(cats));
                 card.setAttribute('data-category', uniqueCats.join(' '));
 
-                const displayCategory = item.category ? (item.category.charAt(0).toUpperCase() + item.category.slice(1) + ' Collection') : 'Portfolio Collection';
+                const formattedCat = item.category
+                  ? item.category.split(/[\s_-]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+                  : 'Portfolio';
+                const displayCategory = `${formattedCat} Collection`;
 
                 card.innerHTML = `
                   <img src="${getImgUrl(item.image)}" alt="${item.title || 'Portfolio Image'}" loading="lazy">

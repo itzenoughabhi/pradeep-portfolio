@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Quick serverless ping (does not block on DB)
 app.get(['/api/ping', '/ping'], (req, res) => {
@@ -87,7 +88,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 4.5 * 1024 * 1024 // Limit file size to 4.5MB (Vercel Hobby plan limit)
+    fileSize: 100 * 1024 * 1024 // Allow larger uploads for client gallery archives
   }
 });
 
@@ -113,6 +114,7 @@ const reviewRoutes = require('./routes/reviews');
 const logoRoutes = require('./routes/logo');
 const heroImageRoutes = require('./routes/heroImage');
 const clientGalleryRoutes = require('./routes/clientGallery');
+const quotationRoutes = require('./routes/quotations');
 
 ['/api/services', '/services'].forEach(p => app.use(p, serviceRoutes));
 ['/api/portfolio', '/portfolio'].forEach(p => app.use(p, portfolioRoutes));
@@ -122,13 +124,14 @@ const clientGalleryRoutes = require('./routes/clientGallery');
 ['/api/logo', '/logo'].forEach(p => app.use(p, logoRoutes));
 ['/api/hero-image', '/hero-image'].forEach(p => app.use(p, heroImageRoutes));
 ['/api/client-gallery', '/client-gallery'].forEach(p => app.use(p, clientGalleryRoutes));
+['/api/quotations', '/quotations'].forEach(p => app.use(p, quotationRoutes));
 
 // Image Upload API Route
 const uploadHandler = (req, res) => {
   upload.single('image')(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({ message: 'File is too large. Maximum size allowed is 4.5MB.' });
+        return res.status(400).json({ message: 'File is too large.' });
       }
       return res.status(400).json({ message: err.message });
     } else if (err) {
@@ -140,10 +143,25 @@ const uploadHandler = (req, res) => {
         return res.status(400).json({ message: 'No file uploaded' });
       }
 
+      // 8MB limit for general images, 12MB limit for client gallery photos
+      const scope = (req.query.scope || req.headers['x-upload-scope'] || '').toLowerCase();
+      const isClientGallery = scope === 'client-gallery';
+      const MAX_GENERAL_LIMIT = 8 * 1024 * 1024; // 8MB
+      const MAX_CLIENT_GALLERY_LIMIT = 12 * 1024 * 1024; // 12MB
+
+      if (!isClientGallery && req.file.size > MAX_GENERAL_LIMIT) {
+        return res.status(400).json({ message: 'File is too large. Maximum size allowed is 8MB.' });
+      }
+      if (isClientGallery && req.file.size > MAX_CLIENT_GALLERY_LIMIT) {
+        return res.status(400).json({ message: 'File is too large. Maximum size allowed for client gallery is 12MB.' });
+      }
+
       // 1. Try uploading to Vercel Blob storage if token is present
       if (process.env.BLOB_READ_WRITE_TOKEN) {
         try {
-          const filename = `${Date.now()}-${req.file.originalname}`;
+          const rawName = req.file.originalname || 'upload.jpg';
+          const cleanName = rawName.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const filename = `${Date.now()}-${cleanName}`;
           const blob = await put(filename, req.file.buffer, { access: 'public' });
           return res.status(201).json({ imageUrl: blob.url });
         } catch (blobErr) {
